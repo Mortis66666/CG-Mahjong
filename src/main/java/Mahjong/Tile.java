@@ -8,10 +8,10 @@ public class Tile {
 
     private int value;
     private TileType type;
-    private TileView view;
+    public TileView view;
 
     public enum TileType {
-        Dot, Circle, Character, Wind, Dragon, Flower, Season
+        Dot, Bamboo, Character, Wind, Dragon, Flower, Season
     }
 
     public Tile(int value, TileType type) {

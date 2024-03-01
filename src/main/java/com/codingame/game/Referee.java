@@ -1,15 +1,15 @@
 package com.codingame.game;
-import java.util.List;
 
-import Mahjong.view.TileView;
+import Mahjong.Game;
+import Mahjong.view.GameView;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.World;
 import com.google.inject.Inject;
 
-import Mahjong.Tile;
+import java.util.List;
+import java.util.Random;
 
 
 public class Referee extends AbstractReferee {
@@ -18,13 +18,15 @@ public class Referee extends AbstractReferee {
     @Inject MultiplayerGameManager<Player> gameManager;
     @Inject GraphicEntityModule graphicEntityModule;
 
+    private Game game;
 
     @Override
     public void init() {
         gameManager.setMaxTurns(2);
 
-        Tile tile = new Tile(1, Tile.TileType.Character);
-        TileView tileView = new TileView(tile, graphicEntityModule);
+
+        game = new Game(new Random(gameManager.getSeed()));
+        new GameView(game, graphicEntityModule);
     }
 
     @Override

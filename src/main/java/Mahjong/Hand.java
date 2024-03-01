@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Hand {
     private ArrayList<Tile> hand;
-    private HandView view;
+    public HandView view;
 
     public Hand(ArrayList<Tile> tiles) {
         this.hand = tiles;
@@ -21,5 +21,7 @@ public class Hand {
         return false;
     }
 
-
+    public ArrayList<Tile> getHand() {
+        return hand;
+    }
 }
