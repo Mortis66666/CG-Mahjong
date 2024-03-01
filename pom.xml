@@ -8,6 +8,7 @@
 
     <properties>
         <gamengine.version>4.2.1</gamengine.version>
+        <mahjongUtilsVersion>0.6.5</mahjongUtilsVersion>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -29,6 +30,12 @@
             <groupId>com.codingame.gameengine</groupId>
             <artifactId>runner</artifactId>
             <version>${gamengine.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.ssttkkl</groupId>
+            <artifactId>mahjong-utils</artifactId>
+            <version>${mahjongUtilsVersion}</version>
         </dependency>
     </dependencies>
 </project>
