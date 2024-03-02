@@ -24,7 +24,7 @@ public class Game {
 
     public void setView(GameView view) {this.view = view;}
 
-    public void commitAction(Action action) {
+    public void commitAction(Action action, double time) {
         actions.add(action);
 
         Hand hand = hands.get(action.player);
@@ -42,7 +42,7 @@ public class Game {
                 break;
         }
 
-        view.graphics.commitWorldState(0.5);
+        view.graphics.commitWorldState(time);
     }
 
     public int findNextPlayer() {

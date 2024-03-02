@@ -23,8 +23,20 @@ public class Tile {
         this.view = view;
     }
 
-    public int getPriority() {
-        return 0;
+    public double getPriority() {
+        int result = 0;
+
+        switch (type) {
+            case Season:result=2;break;
+            case Flower:result=3;break;
+            case Dot:result=4;break;
+            case Bamboo:result=5;break;
+            case Character:result=6;break;
+            case Wind:result=7;break;
+            case Dragon:result=8;break;
+        }
+
+        return result * 9 + value;
     }
 
     public String getAssetPath() {

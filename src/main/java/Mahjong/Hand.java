@@ -3,6 +3,7 @@ package Mahjong;
 import Mahjong.view.HandView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class Hand {
@@ -12,6 +13,7 @@ public class Hand {
 
     public Hand(ArrayList<Tile> tiles) {
         this.hand = tiles;
+        sortHand();
     }
 
     public void setView(HandView view) {
@@ -54,6 +56,16 @@ public class Hand {
     public void drawTile(Tile tile) {
         hand.add(tile);
         view.drawTile(tile);
+        sortHand();
+    }
+
+    private void sortHand() {
+        hand.sort((tile1, tile2) -> {
+            // Compare based on priority (smaller value has higher priority)
+            double priority1 = tile1.getPriority();
+            double priority2 = tile2.getPriority();
+            return Double.compare(priority1, priority2);
+        });
     }
 
     public String toString() {

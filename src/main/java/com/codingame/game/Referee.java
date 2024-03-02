@@ -51,8 +51,8 @@ public class Referee extends AbstractReferee {
         try {
             List<String> outputs = player.getOutputs();
 
-            game.commitAction(new Action(playerId, Action.ActionType.Draw, "_"));
-            game.commitAction(new Action(playerId, Action.ActionType.Discard, game.getHands().get(playerId).getHand().get(0).toString()));
+            game.commitAction(new Action(playerId, Action.ActionType.Draw, "_"), 0.33);
+            game.commitAction(new Action(playerId, Action.ActionType.Discard, game.getHands().get(playerId).getHand().get(0).toString()), 0.66);
 
         } catch (TimeoutException e) {
             player.deactivate(String.format("$%d timeout!", player.getIndex()));
