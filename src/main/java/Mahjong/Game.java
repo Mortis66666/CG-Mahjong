@@ -1,8 +1,6 @@
 package Mahjong;
 
 import Mahjong.view.GameView;
-import Mahjong.view.HandView;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,18 +8,51 @@ import java.util.Random;
 public class Game {
 
     private ArrayList<Tile> pile;
-    private Random random;
-    private ArrayList<Hand> hands;
+    private final Random random;
+    public ArrayList<Hand> hands;
     private GameView view;
+    public ArrayList<Action> actions;
 
     public Game(Random random) {
         this.random = random;
+
+        actions = new ArrayList<Action>();
 
         makePile();
         makeHands();
     }
 
     public void setView(GameView view) {this.view = view;}
+
+    public void commitAction(Action action) {
+        actions.add(action);
+
+        Hand hand = hands.get(action.player);
+
+        view.graphics.commitWorldState(0);
+
+        switch (action.type) {
+            case Discard:
+                hand.discardTile(action.target);
+                break;
+            case Draw:
+                Tile drew = drawTile();
+                hand.drawTile(drew);
+                action.target = drew.toString();
+                break;
+        }
+
+        view.graphics.commitWorldState(0.5);
+    }
+
+    public int findNextPlayer() {
+        if (actions.size() == 0) {
+            return 0;
+        }
+
+        int last = actions.get(actions.size() - 1).player;
+        return last == 3 ? 0 : last + 1;
+    }
 
     private void makePile() {
         pile = new ArrayList<Tile>();

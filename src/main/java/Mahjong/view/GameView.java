@@ -12,7 +12,7 @@ public class GameView {
 
     private final World world;
     private final Game game;
-    private final GraphicEntityModule graphics;
+    public final GraphicEntityModule graphics;
 
 
     public GameView(Game game, GraphicEntityModule graphicEntityModule) {

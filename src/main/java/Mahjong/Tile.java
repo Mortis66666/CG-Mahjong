@@ -30,4 +30,8 @@ public class Tile {
     public String getAssetPath() {
         return String.format("%s/0%d.svg", type.name().toLowerCase(), value);
     }
+
+    public String toString() {
+        return type.name().toLowerCase().charAt(0) + Integer.toString(value);
+    }
 }

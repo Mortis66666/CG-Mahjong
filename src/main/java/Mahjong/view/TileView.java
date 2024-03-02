@@ -21,7 +21,6 @@ public class TileView {
     }
 
     private void drawTile() {
-        System.out.println(tile.getAssetPath());
         Sprite faceSprite = graphics.createSprite().setImage(tile.getAssetPath()).setX(0).setY(20).setScale(0.5).setZIndex(1);
         Sprite tileSprite = graphics.createSprite().setImage("tile/00/02.svg").setX(0).setY(0).setScale(0.5).setZIndex(0);
         sprite = graphics.createGroup(faceSprite, tileSprite).setX(0).setY(0);

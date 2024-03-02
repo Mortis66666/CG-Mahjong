@@ -3,9 +3,11 @@ package Mahjong;
 import Mahjong.view.HandView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Hand {
-    private ArrayList<Tile> hand;
+    private final ArrayList<Tile> hand;
+    private final ArrayList<Tile> discards = new ArrayList<Tile>();
     public HandView view;
 
     public Hand(ArrayList<Tile> tiles) {
@@ -23,5 +25,43 @@ public class Hand {
 
     public ArrayList<Tile> getHand() {
         return hand;
+    }
+
+    public ArrayList<Tile> getDiscards() {
+        return discards;
+    }
+
+    private Tile searchTile(String tileString) {
+        for (Tile tile: hand) {
+            if (Objects.equals(tile.toString(), tileString)) {
+                return tile;
+            }
+        }
+
+        return null;
+    }
+
+    public void discardTile(String tileString) {
+
+        Tile tile = searchTile(tileString);
+
+        hand.remove(tile);
+        discards.add(tile);
+
+        view.discardTile(tile);
+    }
+
+    public void drawTile(Tile tile) {
+        hand.add(tile);
+        view.drawTile(tile);
+    }
+
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (Tile tile: hand) {
+            result.append(tile.toString());
+        }
+
+        return result.toString();
     }
 }

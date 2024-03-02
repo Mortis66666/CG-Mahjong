@@ -1,5 +1,6 @@
 package com.codingame.game;
 
+import Mahjong.Action;
 import Mahjong.Game;
 import Mahjong.view.GameView;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
@@ -22,28 +23,39 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void init() {
-        gameManager.setMaxTurns(2);
+        gameManager.setMaxTurns(92);
 
 
-        game = new Game(new Random(gameManager.getSeed()));
+        game = new Game(gameManager.getRandom());
         new GameView(game, graphicEntityModule);
+
+
     }
 
     @Override
     public void gameTurn(int turn) {
-        for (Player player : gameManager.getActivePlayers()) {
-            player.sendInputLine("input");
-            player.execute();
+        if (turn == 1) {
+            for (int i = 0; i < gameManager.getPlayerCount(); i++) {
+                Player player = gameManager.getPlayer(i);
+
+                player.sendInputLine(game.hands.get(i).toString());
+            }
         }
 
-        for (Player player : gameManager.getActivePlayers()) {
-            try {
-                List<String> outputs = player.getOutputs();
-                // Check validity of the player output and compute the new game state
+        int playerId = game.findNextPlayer();
+        Player player = gameManager.getPlayer(playerId);
 
-            } catch (TimeoutException e) {
-                player.deactivate(String.format("$%d timeout!", player.getIndex()));
-            }
+        player.sendInputLine("input");
+        player.execute();
+
+        try {
+            List<String> outputs = player.getOutputs();
+
+            game.commitAction(new Action(playerId, Action.ActionType.Draw, "_"));
+            game.commitAction(new Action(playerId, Action.ActionType.Discard, game.getHands().get(playerId).getHand().get(0).toString()));
+
+        } catch (TimeoutException e) {
+            player.deactivate(String.format("$%d timeout!", player.getIndex()));
         }
     }
 }
