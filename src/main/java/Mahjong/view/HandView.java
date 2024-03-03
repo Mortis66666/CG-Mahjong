@@ -81,6 +81,15 @@ public class HandView {
             sprite.setX(i * Constant.TILE_WIDTH).setZIndex(i); // Put tile to right
         }
 
+        ArrayList<Tile> door = hand.getDoor();
+
+        for (int i = 0; i < door.size(); i++) {
+            Tile tile = door.get(i);
+            Group sprite = tile.view.getSprite();
+
+            sprite.setX(i * Constant.TILE_WIDTH).setY(-Constant.TILE_HEIGHT-10).setZIndex(i);
+        }
+
         ArrayList<Tile> discardTiles = hand.getDiscards();
 
         for (int i = 0; i < discardTiles.size(); i++) {
@@ -90,7 +99,9 @@ public class HandView {
             int row = Math.floorDiv(i, Constant.DISCARD_PER_ROW);
             int col = i % Constant.DISCARD_PER_ROW;
 
-            sprite.setX((col + 13 - Constant.DISCARD_PER_ROW) * Constant.TILE_WIDTH / 2).setY(Constant.DISCARD_START_ROW + row * Constant.TILE_HEIGHT / 2).setZIndex(i);
+            sprite.setX((col + 13 - Constant.DISCARD_PER_ROW) * Constant.TILE_WIDTH / 2)
+                    .setY(Constant.DISCARD_START_ROW + row * (Constant.TILE_HEIGHT / 2 - 10))
+                    .setZIndex((5 - row) * Constant.DISCARD_PER_ROW + col);
         }
     }
 

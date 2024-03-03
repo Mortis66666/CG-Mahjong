@@ -23,7 +23,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void init() {
-        gameManager.setMaxTurns(92);
+        gameManager.setMaxTurns(80);
 
 
         game = new Game(gameManager.getRandom());
@@ -37,8 +37,9 @@ public class Referee extends AbstractReferee {
         if (turn == 1) {
             for (int i = 0; i < gameManager.getPlayerCount(); i++) {
                 Player player = gameManager.getPlayer(i);
-
                 player.sendInputLine(game.hands.get(i).toString());
+
+                game.checkFlowers();
             }
         }
 

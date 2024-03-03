@@ -9,6 +9,7 @@ import java.util.Objects;
 public class Hand {
     private final ArrayList<Tile> hand;
     private final ArrayList<Tile> discards = new ArrayList<Tile>();
+    private final ArrayList<Tile> door = new ArrayList<Tile>();
     public HandView view;
 
     public Hand(ArrayList<Tile> tiles) {
@@ -33,6 +34,8 @@ public class Hand {
         return discards;
     }
 
+    public ArrayList<Tile> getDoor() {return door;}
+
     private Tile searchTile(String tileString) {
         for (Tile tile: hand) {
             if (Objects.equals(tile.toString(), tileString)) {
@@ -41,6 +44,17 @@ public class Hand {
         }
 
         return null;
+    }
+
+    public boolean have(String tileString) {
+        return searchTile(tileString) != null;
+    }
+
+    public void doorify(String tileString) {
+        Tile tile = searchTile(tileString);
+
+        hand.remove(tile);
+        door.add(tile);
     }
 
     public void discardTile(String tileString) {
@@ -66,6 +80,23 @@ public class Hand {
             double priority2 = tile2.getPriority();
             return Double.compare(priority1, priority2);
         });
+
+        door.sort((tile1, tile2) -> {
+            // Compare based on priority (smaller value has higher priority)
+            double priority1 = tile1.getPriority();
+            double priority2 = tile2.getPriority();
+            return Double.compare(priority1, priority2);
+        });
+    }
+
+    public String flowers() {
+        StringBuilder result = new StringBuilder();
+        for (Tile tile : hand) {
+            if (tile.isFlower()) {
+                result.append(tile);
+            }
+        }
+        return result.toString();
     }
 
     public String toString() {

@@ -8,7 +8,7 @@ public class Action {
     public String target = "_";
 
     public enum ActionType {
-        Draw, Discard, Pong, Seung, Gong
+        Draw, Discard, Pong, Seung, Gong, Flower
     }
 
     public Action(int committer, ActionType action, String target) {

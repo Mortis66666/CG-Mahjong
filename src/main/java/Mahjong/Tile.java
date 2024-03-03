@@ -7,7 +7,7 @@ import Mahjong.view.TileView;
 public class Tile {
 
     private int value;
-    private TileType type;
+    public TileType type;
     public TileView view;
 
     public enum TileType {
@@ -45,5 +45,9 @@ public class Tile {
 
     public String toString() {
         return type.name().toLowerCase().charAt(0) + Integer.toString(value);
+    }
+
+    public boolean isFlower() {
+        return type.equals(Tile.TileType.Flower) || type.equals(Tile.TileType.Season);
     }
 }
