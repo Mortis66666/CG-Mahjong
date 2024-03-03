@@ -4,6 +4,7 @@ import Mahjong.view.HandView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class Hand {
@@ -21,9 +22,75 @@ public class Hand {
         this.view = view;
     }
 
-    public boolean isWinning() {
-        // TODO
-        return false;
+    public boolean isFormat(List<Tile> vec) {
+        if (vec.size() == 0) {
+            return true;
+        } else if (vec.size() < 3 || vec.size() % 3 != 0) {
+            return false;
+        }
+
+        boolean res = false;
+
+        // vec[0] is in AAA pattern
+        if (vec.get(0).equals(vec.get(1)) && vec.get(1).equals(vec.get(2))) {
+            List<Tile> left = vec.subList(3, vec.size());
+            if (isFormat(left)) {
+                res = true;
+            }
+        }
+
+        // vec[0] is in ABC pattern
+        int i = 0;
+        int j = 0;
+        for (int k = 1; k < vec.size(); ++k) {
+            if (vec.get(k).equals(vec.get(0).inc(1))) {
+                i = k;
+            }
+            if (vec.get(k).equals(vec.get(0).inc(2))) {
+                j = k;
+            }
+        }
+        if (i != 0 && j != 0) {
+            List<Tile> left = new ArrayList<>();
+            for (int k = 1; k < vec.size(); ++k) {
+                if (k != i && k != j) {
+                    left.add(vec.get(k));
+                }
+            }
+            if (isFormat(left)) {
+                res = true;
+            }
+        }
+
+        return res;
+    }
+
+    public int priority(Tile discardedTile) {
+        // Check if sikwu
+        ArrayList<Tile> newHand = new ArrayList<>(hand);
+        newHand.add(discardedTile);
+
+        if (isFormat(newHand)) {
+            return 400;
+        }
+
+        // Check if pong/gong
+        if (countTiles(discardedTile) >= 2) {
+            System.out.println("Have" + discardedTile);
+            System.out.println(hand);
+            return 300;
+        }
+
+        return 0;
+    }
+
+    private int countTiles(Tile target) {
+        int res = 0;
+        for (Tile tile : hand) {
+            if (tile.equals(target)) res++;
+        }
+
+        return res;
     }
 
     public ArrayList<Tile> getHand() {
@@ -36,8 +103,18 @@ public class Hand {
 
     public ArrayList<Tile> getDoor() {return door;}
 
-    private Tile searchTile(String tileString) {
+    public Tile searchTile(String tileString) {
         for (Tile tile: hand) {
+            if (Objects.equals(tile.toString(), tileString)) {
+                return tile;
+            }
+        }
+
+        return null;
+    }
+
+    public Tile searchFromDiscard(String tileString) {
+        for (Tile tile: discards) {
             if (Objects.equals(tile.toString(), tileString)) {
                 return tile;
             }
@@ -57,10 +134,22 @@ public class Hand {
         door.add(tile);
     }
 
+    public void doorify(Tile tile) {
+        hand.remove(tile);
+        door.add(tile);
+    }
+
     public void discardTile(String tileString) {
 
         Tile tile = searchTile(tileString);
 
+        hand.remove(tile);
+        discards.add(tile);
+
+        view.discardTile(tile);
+    }
+
+    public void discardTile(Tile tile) {
         hand.remove(tile);
         discards.add(tile);
 
@@ -97,6 +186,16 @@ public class Hand {
             }
         }
         return result.toString();
+    }
+
+    public ArrayList<Tile> flowerTiles() {
+        ArrayList<Tile> result = new ArrayList<>();
+        for (Tile tile : hand) {
+            if (tile.isFlower()) {
+                result.add(tile);
+            }
+        }
+        return result;
     }
 
     public String toString() {

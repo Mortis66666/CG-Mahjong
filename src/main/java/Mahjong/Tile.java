@@ -44,10 +44,19 @@ public class Tile {
     }
 
     public String toString() {
-        return type.name().toLowerCase().charAt(0) + Integer.toString(value);
+        char c = type.equals(TileType.Dragon) ? 'r' : type.name().toLowerCase().charAt(0);
+        return c + Integer.toString(value);
     }
 
     public boolean isFlower() {
         return type.equals(Tile.TileType.Flower) || type.equals(Tile.TileType.Season);
+    }
+
+    public Tile inc(int n) {
+        return new Tile(value + n, type);
+    }
+
+    public boolean equals(Tile other) {
+        return toString().equals(other.toString());
     }
 }

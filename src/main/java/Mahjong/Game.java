@@ -2,10 +2,7 @@ package Mahjong;
 
 import Mahjong.view.GameView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,22 +32,25 @@ public class Game {
 
         switch (action.type) {
             case Discard:
-                hand.discardTile(action.target);
+                hand.discardTile(action.targets.get(0));
                 break;
             case Draw:
                 Tile drew = drawTile();
                 hand.drawTile(drew);
-                action.target = drew.toString();
+                action.targets.add(drew);
+
+                ArrayList<Tile> temp = new ArrayList<>();
+                temp.add(drew);
 
                 if (drew.isFlower()) {
-                    commitAction(new Action(action.player, Action.ActionType.Flower, drew.toString()), -1);
+                    commitAction(new Action(action.player, Action.ActionType.Flower, temp), -1);
                 }
                 break;
             case Flower:
-                for (String s: splitTileStrings(action.target)) {
+                for (Tile s : action.targets) {
                     hand.doorify(s);
                 }
-                commitAction(new Action(action.player, Action.ActionType.Draw, "_"), -1);
+                commitAction(new Action(action.player, Action.ActionType.Draw, new ArrayList<>()), -1);
                 break;
         }
 
@@ -78,7 +78,26 @@ public class Game {
             Action action = actions.get(i);
 
             if (action.type.equals(Action.ActionType.Discard)) {
-                return action.player == 3 ? 0 : action.player + 1;
+                System.out.println(action.targets);
+                int expectedNext = action.player == 3 ? 0 : action.player + 1;
+
+                ArrayList<Integer> scores = new ArrayList<>();
+
+                for (int j = 0; j < 4; j++) {
+                    int score = -1;
+                    if (j == expectedNext) {
+                        score = 0;
+                    } else if (j != action.player) {
+                        score += hands.get(j).priority(action.targets.get(action.targets.size() - 1));
+                    }
+
+                    scores.add(score);
+                }
+
+                System.out.print("Score:");
+                System.out.println(scores);
+
+                return scores.indexOf(Collections.max(scores));
             }
         }
 
@@ -128,7 +147,7 @@ public class Game {
         for (int i = 0; i < 4; i++) {
             Hand hand = hands.get(i);
 
-            for (String flowers = hand.flowers(); !Objects.equals(flowers, ""); flowers = hand.flowers()) {
+            for (ArrayList<Tile> flowers = hand.flowerTiles(); flowers.size() > 0; flowers = hand.flowerTiles()) {
                 commitAction(new Action(i, Action.ActionType.Flower, flowers), 0.1);
             }
         }
