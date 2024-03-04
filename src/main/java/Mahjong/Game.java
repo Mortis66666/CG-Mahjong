@@ -26,9 +26,8 @@ public class Game {
     public void setView(GameView view) {this.view = view;}
 
     public void commitAction(Action action, double time) {
-        actions.add(action);
-
         Hand hand = hands.get(action.player);
+        Action lastAction = getLastMeaningfulAction();
 
         switch (action.type) {
             case Discard:
@@ -52,7 +51,41 @@ public class Game {
                 }
                 commitAction(new Action(action.player, Action.ActionType.Draw, new ArrayList<>()), -1);
                 break;
+            case Pong:
+                Tile pongTarget = action.targets.get(0);
+
+                hands.get(lastAction.player).freeDiscard(pongTarget);
+                hand.drawTile(pongTarget);
+
+                for (int i = 0; i < 3; i++) {
+                    hand.doorify(pongTarget.toString());
+                }
+
+                commitAction(new Action(
+                        action.player,
+                        Action.ActionType.Discard,
+                        (ArrayList<Tile>) action.targets.subList(1, 2)
+                ), -1);
+                break;
+            case Seung:
+                List<Tile> meld = action.targets.subList(0, 2);
+
+                hands.get(lastAction.player).freeDiscard(meld.get(0));
+                hand.drawTile(meld.get(0));
+
+                for (Tile tile : meld) {
+                    hand.doorify(tile);
+                }
+
+                commitAction(new Action(
+                        action.player,
+                        Action.ActionType.Discard,
+                        (ArrayList<Tile>) action.targets.subList(1, 2)
+                ), -1);
+                break;
         }
+
+        actions.add(action);
 
         if (time > 0)
             view.graphics.commitWorldState(time);
@@ -73,35 +106,110 @@ public class Game {
         return pairs;
     }
 
-    public int findNextPlayer() {
+    public Action getLastMeaningfulAction() {
+        if (actions.size() == 0) return null;
+
+        Action lastAction = actions.get(actions.size() - 1);
+
+        return lastAction.type.equals(Action.ActionType.Flower) ? null : lastAction;
+    }
+
+    public ArrayList<Action> getUnknownActions(int playerId) {
+        ArrayList<Action> result = new ArrayList<>();
+
         for (int i = actions.size() - 1; i > -1; i--) {
             Action action = actions.get(i);
 
-            if (action.type.equals(Action.ActionType.Discard)) {
-                System.out.println(action.targets);
-                int expectedNext = action.player == 3 ? 0 : action.player + 1;
-
-                ArrayList<Integer> scores = new ArrayList<>();
-
-                for (int j = 0; j < 4; j++) {
-                    int score = -1;
-                    if (j == expectedNext) {
-                        score = 0;
-                    } else if (j != action.player) {
-                        score += hands.get(j).priority(action.targets.get(action.targets.size() - 1));
-                    }
-
-                    scores.add(score);
+            if (action.type.equals(Action.ActionType.Bookmark)) {
+                if (action.player == playerId) {
+                    break; // Break on bookmark
+                } else {
+                    continue; // Ignore on other's bookmark
                 }
-
-                System.out.print("Score:");
-                System.out.println(scores);
-
-                return scores.indexOf(Collections.max(scores));
             }
+
+            if (action.player != playerId && action.type.equals(Action.ActionType.Draw)) {
+                continue;
+            }
+
+            result.add(0, action);
         }
 
-        return 0;
+        actions.add(new Action(playerId, Action.ActionType.Bookmark, new ArrayList<>()));
+        return result;
+    }
+
+    public boolean canPlay(int playerId) {
+        Action lastAction = getLastMeaningfulAction();
+
+        if (lastAction == null) {
+            return playerId == 0; // When there's no action previously, naturally only the first player can play
+        }
+
+        if (lastAction.type.equals(Action.ActionType.Gong)) {
+            return playerId == lastAction.player; // When the last action is gong, the player
+        }
+
+        Hand hand = hands.get(playerId);
+
+
+        int expectedNext = lastAction.player == 3 ? 0 : lastAction.player + 1;
+        if (playerId == expectedNext) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean canInterrupt(int playerId) {
+        Hand hand = hands.get(playerId);
+        Action action = getLastMeaningfulAction();
+
+        if (action == null || action.type.equals(Action.ActionType.Gong)) {
+            return false;
+        }
+
+        Tile lastDiscarded = action.targets.get(0);
+
+        return hand.canInterrupt(lastDiscarded);
+
+
+    }
+
+    public ArrayList<Integer> getPlayerPriorities() {
+
+        Action action = getLastMeaningfulAction();
+
+        if (action == null) {
+            ArrayList<Integer> result = new ArrayList<>();
+            result.add(0);
+            result.add(-1);
+            result.add(-1);
+            result.add(-1);
+
+            return result;
+        }
+
+        System.out.println(action.targets);
+        int expectedNext = action.player == 3 ? 0 : action.player + 1;
+
+        ArrayList<Integer> scores = new ArrayList<>();
+
+        for (int j = 0; j < 4; j++) {
+            int score = -1;
+            if (j == expectedNext) {
+                score = 0;
+            } else if (j != action.player) {
+                score += hands.get(j).priority(action.targets.get(action.targets.size() - 1));
+            }
+
+            scores.add(score);
+        }
+
+        System.out.print("Score:");
+        System.out.println(scores);
+
+        return scores;
     }
 
     private void makePile() {

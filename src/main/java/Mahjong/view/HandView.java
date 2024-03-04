@@ -71,6 +71,10 @@ public class HandView {
         arrangeSprite();
     }
 
+    public void freeDiscard(Tile tile) {
+        sprite.remove(tile.view.getSprite());
+    }
+
     public void arrangeSprite() {
         ArrayList<Tile> handTiles = hand.getHand();
 

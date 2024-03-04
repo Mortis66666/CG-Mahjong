@@ -27,11 +27,8 @@ public class Referee extends AbstractReferee {
     public void init() {
         gameManager.setMaxTurns(80);
 
-
         game = new Game(gameManager.getRandom());
         new GameView(game, graphicEntityModule);
-
-
     }
 
     @Override
@@ -45,22 +42,56 @@ public class Referee extends AbstractReferee {
             }
         }
 
-        int playerId = game.findNextPlayer();
-        Player player = gameManager.getPlayer(playerId);
+        boolean interrupted = false;
+        for (int playerId = 0; playerId < gameManager.getPlayerCount(); playerId++) {
+            if (game.canInterrupt(playerId)) {
+                Player player = gameManager.getPlayer(playerId);
+                ArrayList<Action> unknownActions = game.getUnknownActions(playerId);
 
-        player.sendInputLine("input");
-        player.execute();
+                player.sendInputLine("interrupt");
+                player.sendInputLine(String.valueOf(unknownActions.size()));
 
-        try {
-            List<String> outputs = player.getOutputs();
+                for (Action action : unknownActions) {
+                    player.sendInputLine(action.toString());
+                }
 
-            game.commitAction(new Action(playerId, Action.ActionType.Draw, new ArrayList<>()), 0.33);
-            ArrayList<Tile> temp = new ArrayList<Tile>();
-            temp.add(game.getHands().get(playerId).getHand().get(0));
-            game.commitAction(new Action(playerId, Action.ActionType.Discard, temp), 0.66);
+                player.execute();
 
-        } catch (TimeoutException e) {
-            player.deactivate(String.format("$%d timeout!", player.getIndex()));
+                try {
+                    List<String> outputs = player.getOutputs();
+
+                    game.commitAction(new Action(playerId, Action.ActionType.Draw, new ArrayList<>()), 0.33);
+                    ArrayList<Tile> temp = new ArrayList<Tile>();
+                    temp.add(game.getHands().get(playerId).getHand().get(0));
+                    game.commitAction(new Action(playerId, Action.ActionType.Discard, temp), 0.66);
+
+                } catch (TimeoutException e) {
+                    player.deactivate(String.format("$%d timeout!", player.getIndex()));
+                    gameManager.endGame();
+                }
+            }
+        }
+
+        ArrayList<Integer> scores = game.getPlayerPriorities();
+
+        for (int playerId = 0; playerId < 4; playerId++) {
+            Player player = gameManager.getPlayer(playerId);
+            int score = scores.get(playerId);
+
+            player.sendInputLine("input");
+            player.execute();
+
+            try {
+                List<String> outputs = player.getOutputs();
+
+                game.commitAction(new Action(playerId, Action.ActionType.Draw, new ArrayList<>()), 0.33);
+                ArrayList<Tile> temp = new ArrayList<Tile>();
+                temp.add(game.getHands().get(playerId).getHand().get(0));
+                game.commitAction(new Action(playerId, Action.ActionType.Discard, temp), 0.66);
+
+            } catch (TimeoutException e) {
+                player.deactivate(String.format("$%d timeout!", player.getIndex()));
+            }
         }
     }
 }

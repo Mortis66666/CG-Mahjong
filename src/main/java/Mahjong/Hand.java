@@ -65,6 +65,37 @@ public class Hand {
         return res;
     }
 
+    public boolean canInterrupt(Tile tile) {
+        if (canPong(tile)) {
+            return true;
+        }
+
+        if (canSeung(tile)) {
+            return true;
+        }
+
+        return canSik(tile);
+    }
+
+    private boolean canSik(Tile discardedTile) {
+        ArrayList<Tile> newHand = new ArrayList<>(hand);
+        newHand.add(discardedTile);
+
+        return isFormat(newHand);
+    }
+
+    private boolean canPong(Tile discardedTile) {
+        return countTiles(discardedTile) >= 2;
+    }
+
+    private boolean canSeung(Tile discardedTile) {
+        return (
+                (have(discardedTile.inc(1)) && have(discardedTile.inc(2))) ||
+                (have(discardedTile.inc(-1)) && have(discardedTile.inc(-2))) ||
+                (have(discardedTile.inc(-1)) && have(discardedTile.inc(1)))
+        );
+    }
+
     public int priority(Tile discardedTile) {
         // Check if sikwu
         ArrayList<Tile> newHand = new ArrayList<>(hand);
@@ -127,6 +158,10 @@ public class Hand {
         return searchTile(tileString) != null;
     }
 
+    public boolean have(Tile tile) {
+        return have(tile.toString());
+    }
+
     public void doorify(String tileString) {
         Tile tile = searchTile(tileString);
 
@@ -160,6 +195,11 @@ public class Hand {
         hand.add(tile);
         view.drawTile(tile);
         sortHand();
+    }
+
+    public void freeDiscard(Tile tile) {
+        discards.remove(tile);
+        view.freeDiscard(tile);
     }
 
     private void sortHand() {
