@@ -28,64 +28,53 @@ public class Game {
     public void commitAction(Action action, double time) {
         Hand hand = hands.get(action.player);
         Action lastAction = getLastMeaningfulAction();
+        actions.add(action);
 
         switch (action.type) {
-            case Discard:
-                hand.discardTile(action.targets.get(0));
-                break;
-            case Draw:
+            case Discard -> hand.discardTile(action.targets.get(0));
+            case Draw -> {
                 Tile drew = drawTile();
                 hand.drawTile(drew);
                 action.targets.add(drew);
-
                 ArrayList<Tile> temp = new ArrayList<>();
                 temp.add(drew);
-
                 if (drew.isFlower()) {
                     commitAction(new Action(action.player, Action.ActionType.Flower, temp), -1);
                 }
-                break;
-            case Flower:
+            }
+            case Flower -> {
                 for (Tile s : action.targets) {
                     hand.doorify(s);
                 }
                 commitAction(new Action(action.player, Action.ActionType.Draw, new ArrayList<>()), -1);
-                break;
-            case Pong:
+            }
+            case Pong -> {
                 Tile pongTarget = action.targets.get(0);
-
                 hands.get(lastAction.player).freeDiscard(pongTarget);
                 hand.drawTile(pongTarget);
-
                 for (int i = 0; i < 3; i++) {
                     hand.doorify(pongTarget.toString());
                 }
-
                 commitAction(new Action(
                         action.player,
                         Action.ActionType.Discard,
-                        (ArrayList<Tile>) action.targets.subList(1, 2)
+                        new ArrayList<>(action.targets.subList(1, 2))
                 ), -1);
-                break;
-            case Seung:
+            }
+            case Seung -> {
                 List<Tile> meld = action.targets.subList(0, 2);
-
                 hands.get(lastAction.player).freeDiscard(meld.get(0));
                 hand.drawTile(meld.get(0));
-
                 for (Tile tile : meld) {
                     hand.doorify(tile);
                 }
-
                 commitAction(new Action(
                         action.player,
                         Action.ActionType.Discard,
-                        (ArrayList<Tile>) action.targets.subList(1, 2)
+                        new ArrayList<>(action.targets.subList(3, 4))
                 ), -1);
-                break;
+            }
         }
-
-        actions.add(action);
 
         if (time > 0)
             view.graphics.commitWorldState(time);
@@ -109,9 +98,15 @@ public class Game {
     public Action getLastMeaningfulAction() {
         if (actions.size() == 0) return null;
 
-        Action lastAction = actions.get(actions.size() - 1);
+        for (int i = actions.size() - 1; i > -1; i--) {
+            Action action = actions.get(i);
 
-        return lastAction.type.equals(Action.ActionType.Flower) ? null : lastAction;
+            if (action.type.equals(Action.ActionType.Discard) || action.type.equals(Action.ActionType.Gong)) {
+                return action;
+            }
+        }
+
+        return null;
     }
 
     public ArrayList<Action> getUnknownActions(int playerId) {
@@ -161,19 +156,26 @@ public class Game {
         return false;
     }
 
+    public int getNextPlayer() {
+        Action lastAction = getLastMeaningfulAction();
+        if (lastAction == null) return 0;
+        return lastAction.player == 3 ? 0 : lastAction.player + 1;
+    }
+
     public boolean canInterrupt(int playerId) {
         Hand hand = hands.get(playerId);
         Action action = getLastMeaningfulAction();
 
-        if (action == null || action.type.equals(Action.ActionType.Gong)) {
+        if (action == null || action.type.equals(Action.ActionType.Gong) || action.type.equals(Action.ActionType.Pass)) {
             return false;
         }
 
-        Tile lastDiscarded = action.targets.get(0);
+        if (action.player == playerId) {
+            return false;
+        }
 
+        Tile lastDiscarded = action.targets.get(action.targets.size() - 1);
         return hand.canInterrupt(lastDiscarded);
-
-
     }
 
     public ArrayList<Integer> getPlayerPriorities() {

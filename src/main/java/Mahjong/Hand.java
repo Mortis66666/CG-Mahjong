@@ -77,18 +77,18 @@ public class Hand {
         return canSik(tile);
     }
 
-    private boolean canSik(Tile discardedTile) {
+    public boolean canSik(Tile discardedTile) {
         ArrayList<Tile> newHand = new ArrayList<>(hand);
         newHand.add(discardedTile);
 
         return isFormat(newHand);
     }
 
-    private boolean canPong(Tile discardedTile) {
+    public boolean canPong(Tile discardedTile) {
         return countTiles(discardedTile) >= 2;
     }
 
-    private boolean canSeung(Tile discardedTile) {
+    public boolean canSeung(Tile discardedTile) {
         return (
                 (have(discardedTile.inc(1)) && have(discardedTile.inc(2))) ||
                 (have(discardedTile.inc(-1)) && have(discardedTile.inc(-2))) ||
@@ -115,7 +115,7 @@ public class Hand {
         return 0;
     }
 
-    private int countTiles(Tile target) {
+    public int countTiles(Tile target) {
         int res = 0;
         for (Tile tile : hand) {
             if (tile.equals(target)) res++;

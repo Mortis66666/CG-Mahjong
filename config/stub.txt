@@ -1,0 +1,7 @@
+read windSeat:int
+read startingTiles:word(26)
+
+gameloop
+read roundType:word(9)
+read numberOfActions:int
+loop numberOfActions read committer:int action:word(7) targetTiles:word(6)

@@ -6,7 +6,7 @@ import Mahjong.view.TileView;
 
 public class Tile {
 
-    private int value;
+    public int value;
     public TileType type;
     public TileView view;
 

@@ -40,8 +40,7 @@ public class HandView {
     private void initSprite() {
         ArrayList<Tile> handTiles = hand.getHand();
 
-        for (int i = 0; i < handTiles.size(); i++) {
-            Tile tile = handTiles.get(i);
+        for (Tile tile : handTiles) {
             Group sprite = tile.view.getSprite();
 
             this.handSprite.add(sprite);
@@ -72,7 +71,7 @@ public class HandView {
     }
 
     public void freeDiscard(Tile tile) {
-        sprite.remove(tile.view.getSprite());
+        handSprite.remove(tile.view.getSprite());
     }
 
     public void arrangeSprite() {

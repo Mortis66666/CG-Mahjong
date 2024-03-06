@@ -8,16 +8,14 @@ public class Main {
         gameRunner.setSeed(2311604759057582817L);
 
         // Adds as many player as you need to test your game
-        gameRunner.addAgent(Agent2.class);
-        gameRunner.addAgent(Agent2.class);
-        gameRunner.addAgent(Agent1.class);
-        gameRunner.addAgent(Agent1.class);
-
+        gameRunner.addAgent("python /Users/User/Desktop/CG-game/HK-Mahjong/config/Boss.py3");
+        gameRunner.addAgent("python /Users/User/Desktop/CG-game/HK-Mahjong/config/Boss.py3");
+        gameRunner.addAgent("python /Users/User/Desktop/CG-game/HK-Mahjong/config/Boss.py3");
+        gameRunner.addAgent("python /Users/User/Desktop/CG-game/HK-Mahjong/config/Boss.py3");
 
         gameRunner.start();
 
         // Another way to add a player
-        // gameRunner.addAgent("python3 /home/user/player.py");
         //        GameResult result = gameRunner.simulate();
         //
         //        System.out.println(result.outputs);

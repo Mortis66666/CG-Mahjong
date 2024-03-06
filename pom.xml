@@ -5,6 +5,18 @@
 	<groupId>com.codingame.com</groupId>
 	<artifactId>skeleton</artifactId>
 	<version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <properties>
         <gamengine.version>4.2.1</gamengine.version>
