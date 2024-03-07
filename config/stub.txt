@@ -1,6 +1,5 @@
 read windSeat:int
 read startingTiles:word(26)
-
 gameloop
 read roundType:word(9)
 read numberOfActions:int

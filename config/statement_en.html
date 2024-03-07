@@ -1,132 +1,181 @@
 <div id="statement_back" class="statement_back" style="display:none"></div>
 <div class="statement-body">
-  <!-- GOAL -->
-  <div class="statement-section statement-goal">
-    <h1>
-      <span class="icon icon-goal">&nbsp;</span>
-      <span>The Goal</span>
-    </h1>
-    <div class="statement-goal-content">
-      The aim of this game is to win.
-      <br>
-      <br>
-      For this question, you will be asked to output a single line as a solution.
-    </div>
-  </div>
-  <!-- RULES -->
-  <div class="statement-section statement-rules">
-    <h1>
-      <span class="icon icon-rules">&nbsp;</span>
-      <span>Rules</span>
-    </h1>
-    <div>
-      <div class="statement-rules-content">Your program receives characters.<br>
-        Your actions have an effect.<br>
-        <br>
-        The game zone works as follows:
-        <ul>
-          <li>There are coordinates.</li>
-        </ul>
-        <br>
-        The units work as follows:
-        <ul>
-          <li>They move around.</li>
-        </ul>
-        You <strong>lose</strong> if:
-        <ul>
-          <li>You mess up.</li>
-          <li>You do not supply a valid sequence of actions.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <!-- EXPERT RULES -->
-  <div class="statement-section statement-expertrules">
-    <h1>
-      <span class="icon icon-expertrules">&nbsp;</span>
-      <span>Expert Rules</span>
-    </h1>
-    <div class="statement-expert-rules-content">
-      If you're going to run local simulations, you'll need to know this!
-    </div>
-  </div>
-  <!-- EXAMPLES -->
-  <div class="statement-section statement-examples">
-    <h1>
-      <span class="icon icon-example">&nbsp;</span>
-      <span>Example</span>
-    </h1>
+	<div class="statement-rules-content">
+		<b>WIP</b>
+		<p>
+			This is a port of the <b>Hong Kong</b> version of Mahjong.
+		</p>
+		<p>
+			The source code of this game is available <a target="_blank" href="https://github.com/Mortis66666/CG-Mahjong">on this GitHub repository</a>.
+		</p>
+	</div>
+	<br />
 
-    <div class="statement-examples-text">
-      A basic situation, an instruction, a result.
-    </div>
+	<!-- GOAL -->
+	<div class="statement-section statement-goal">
+		<h1>
+			<span class="icon icon-goal">&nbsp;</span>
+			<span>The Goal</span>
+		</h1>
+		<div class="statement-goal-content">
+			The aim of this game is to win.
+			<br>
+			<br>
+			For this question, you will be asked to output a single line as a solution.
+		</div>
+	</div>
+	<!-- RULES -->
+	<div class="statement-section statement-rules">
+		<h1>
+			<span class="icon icon-rules">&nbsp;</span>
+			<span>Rules</span>
+		</h1>
+		<div>
+			<div class="statement-rules-content">
+				<p style="margin-bottom: 15px">
+				<ul>
+					<li><a target="_blank" href="https://youtu.be/_JGsb87PEIo?si=o3EIotHE_6podgRD">A very helpful youtube video</a></li>
+					<li><a target="_blank" href="www.coololdgames.com/tile-games/mahjong/hong-kong/">A very helpful article</a></li>
+				</ul>
+				</p>
 
-  </div>
-  <!-- WARNING -->
-  <div class="statement-section statement-warning">
-    <h1>
-      <span class="icon icon-warning">&nbsp;</span>
-      <span>Note</span>
-    </h1>
-    <div class="statement-warning-content">
-      <b>Don’t forget to run the tests by launching them from the “Test cases” window</b>. You can submit at any time
-      to recieve a score against the training validators. <b>You can submit as many times as you like</b>. Your most
-      recent submission will be used for the final ranking.<br>
-      <br>
-      <strong>Warning:</strong> the validation tests used to compute the final score are not the same as the ones used
-      during the event.
-      Harcoded solutions will not score highly.<br>
-      <br>
-      Don't hesitate to change the viewer's options to help debug your code (<img style="opacity:.8;background:#20252a;"
-        height="18" src="https://www.codingame.com/servlet/fileservlet?id=3463235186409" width="18">).
-    </div>
-  </div>
-  <!-- PROTOCOL -->
-  <div class="statement-section statement-protocol">
-    <h1>
-      <span class="icon icon-protocol">&nbsp;</span>
-      <span>Game Input</span>
-    </h1>
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="text">The program must first read the initialization data from standard input. Then, provide to the
-        standard output one line with ...</div>
-    </div>
+				<p>tiles is represented by 2 characters, first being the representation of the tile type, while the second being the corresponding value</p>
 
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Input</div>
-      <div class="text">
-        <p><span class="statement-lineno">Line 1: </span>one string <var>...</var>, the ...</p>
-      </div>
-    </div>
+				<br />
 
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Output</div>
-      <div class="text">
-        <span class="statement-lineno">A single line</span> containing ...
-        <br>
-      </div>
-    </div>
+				<p>List of tile types, and their character representation</p>
 
-    <!-- Protocol block -->
-    <div class="blk">
-      <div class="title">Constraints</div>
-      <div class="text"><var>...</var> contains between 1 and 500 characters.<br>
-        <br>Allotted response time to output
-        is ≤ <const>2</const> seconds.</div>
-    </div>
-  </div>
-  <!-- STORY -->
-  <div class="statement-story-background">
-    <div class="statement-story-cover" style="background-size: cover; background-image: url(https://www.codingame.com/servlet/fileservlet?id=2210505809934)">
-      <div class="statement-story">
-        <h1>Title</h1>
-        <div class="story-text">Story
-          <br>
-          Totally optional</div>
-      </div>
-    </div>
-  </div>
+				<ul>
+					<li><const>D</const>ot</li>
+					<li><const>B</const>amboo</li>
+					<li><const>C</const>haracter</li>
+					<li><const>W</const>ind</li>
+					<li>d<const>R</const>agon</li>
+					<li><const>F</const>lower</li>
+					<li><const>S</const>eason</li>
+				</ul>
+
+				<p>For the suited tiles, the value will be the numeral value. For example, "5 Dot" is represented as <const>d5</const>, while "1 Bamboo is represented as <const>b1</const>"</p>
+
+				<br>
+
+				<p>for honour tiles and season tiles, the value represents the index of the tile type, the types are ordered as follow:</p>
+
+				<ul>
+					<li>Wind tile: East, South, West, North</li>
+					<li>Dragon tile: Red dragon, Green dragon, White dragon</li>
+					<li>Flower tile: 梅,兰,竹,菊</li>
+					<li>Season tile: 春,夏,秋,冬</li>
+				</ul>
+
+				<p>For example, South will be represented as <const>w2</const>, and White dragon will be represented as <const>r3</const></p>
+
+				<br>
+
+				<p>Each round, you will receive a list of actions, the actions given is the action made by other players since your last turn, with the actions you committed being on top of the list. You can only get non-draw actions by other players, as it you aren't suppose to know what they drew. Refer below for the action format</p>
+
+				<br>
+
+				<p>there are 2 types of <var>roundType</var>, <const>normal</const> and <const>interrupt</const></p>
+
+				<br>
+
+				<p>In normal round, the last actions of the list will be about the tile you drew. in normal mode, you can only perform a <const>DISCARD</const> action</p>
+
+				<br>
+
+				<p>In interrupt round, the last action of the list will be a discard. It means that you have an oppurtunity to interrupt the normal move sequence, with actions like WIN, GONG, PONG and SEUNG</p>
+
+				<br>
+
+				<p>Since this is WIP, you still can't do a win/gong action</p>
+
+				<br>
+
+				<p>If you don't want to perform any action, you can output PASS (only available in interrupt round). Even if you output your action, you won't always be able to successfully perform it, as other's might have a higher priority than you. To know if you performed it, you can refer to actions of the next normal round</p>
+			</div>
+		</div>
+	</div>
+	<!-- EXAMPLES -->
+	<div class="statement-section statement-examples">
+		<h1>
+			<span class="icon icon-example">&nbsp;</span>
+			<span>Example</span>
+		</h1>
+
+		<div class="statement-examples-text">
+			A basic situation, an instruction, a result.
+		</div>
+	</div>
+
+	<!-- PROTOCOL -->
+	<div class="statement-section statement-protocol">
+		<h1>
+			<span class="icon icon-protocol">&nbsp;</span>
+			<span>Game Input</span>
+		</h1>
+		<!-- Protocol block -->
+		<div class="blk">
+			<div class="title">Initialization input</div>
+			<span class="statement-lineno">Line 1</span> : <var>windSeat</var>, aka your player id.
+			<br />
+			<span class="statement-lineno">Line 2</span> : <var>startingTiles</var>, your starting hand. (representation of tiles chucked together with no spaces, for example: f3d1d8d8b3b6b7c1c6c8r1r1r2)
+			<br />
+		</div>
+
+		<!-- Protocol block -->
+		<div class="blk">
+			<div class="title">Input for one game turn</div>
+			<div class="text">
+				<p><span class="statement-lineno">Line 1: </span><var>roundType</var>, normal | interrupt</p>
+				<p><span class="statement-lineno">Line 2: </span>integer <var>numberOfActions</var></p>
+				<p><span class="statement-lineno">Next <var>numberOfActions</var> lines:</span></p>
+				<ul>
+					<li>integer <var>committer</var>, representing the id of the player that did this action</li>
+					<li>
+						string <var>action</var>, can be either:
+
+						<ul>
+							<li><const>Draw</const></li>
+							<li><const>Discard</const></li>
+							<li><const>Pong</const></li>
+							<li><const>Seung</const></li>
+							<li><const>Gong</const></li>
+							<li><const>Flower</const></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- Protocol block -->
+		<div class="blk">
+			<div class="title">Output</div>
+			<div class="text">
+				<span class="statement-lineno">A single line</span> containing the player action. List of actions:
+				<br>
+				<p>Normal round:</p>
+				<ul>
+					<li><action>DISCARD <var>tile</var></action></li>
+				</ul>
+				<br>
+				<p>Interruption round:</p>
+				<ul>
+					<li><action>PONG <var>tile</var></action>, <var>tile</var> being the tile you wish to discard</li>
+					<li><action>SEUNG <var>tile1</var><var>tile2</var><var>tile3</var></action>, tile1 and tile2 being the tile you wish to seung with the target tile, and tile3 being the tile you wish to discard</li>
+					<li><action>GONG</action>, not available yet</li>
+					<li><action>WIN</action>, not available yet</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- Protocol block -->
+		<div class="blk">
+			<div class="title">Constraints</div>
+			<div class="text">
+				<var>windSeat</var> <const>0</const>~<const>3</const><br>
+				<br>
+			</div>
+		</div>
+	</div>
 </div>
