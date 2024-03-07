@@ -96,6 +96,14 @@ public class Hand {
         );
     }
 
+    public boolean canGong(Tile discardTile, boolean interrupt) {
+        if (interrupt) {
+            return countTiles(discardTile) == 3;
+        } else {
+            return countDoor(discardTile) == 3;
+        }
+    }
+
     public int priority(Tile discardedTile) {
         // Check if sikwu
         ArrayList<Tile> newHand = new ArrayList<>(hand);
@@ -118,6 +126,15 @@ public class Hand {
     public int countTiles(Tile target) {
         int res = 0;
         for (Tile tile : hand) {
+            if (tile.equals(target)) res++;
+        }
+
+        return res;
+    }
+
+    public int countDoor(Tile target) {
+        int res = 0;
+        for (Tile tile : door) {
             if (tile.equals(target)) res++;
         }
 

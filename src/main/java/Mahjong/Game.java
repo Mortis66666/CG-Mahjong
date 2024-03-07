@@ -31,8 +31,10 @@ public class Game {
         actions.add(action);
 
         switch (action.type) {
-            case Discard -> hand.discardTile(action.targets.get(0));
-            case Draw -> {
+            case Discard:
+                hand.discardTile(action.targets.get(0));
+                break;
+            case Draw:
                 Tile drew = drawTile();
                 hand.drawTile(drew);
                 action.targets.add(drew);
@@ -41,40 +43,45 @@ public class Game {
                 if (drew.isFlower()) {
                     commitAction(new Action(action.player, Action.ActionType.Flower, temp), -1);
                 }
-            }
-            case Flower -> {
+                break;
+            case Flower:
                 for (Tile s : action.targets) {
                     hand.doorify(s);
                 }
                 commitAction(new Action(action.player, Action.ActionType.Draw, new ArrayList<>()), -1);
-            }
-            case Pong -> {
+                break;
+            case Pong:
                 Tile pongTarget = action.targets.get(0);
                 hands.get(lastAction.player).freeDiscard(pongTarget);
                 hand.drawTile(pongTarget);
                 for (int i = 0; i < 3; i++) {
                     hand.doorify(pongTarget.toString());
                 }
-                commitAction(new Action(
-                        action.player,
-                        Action.ActionType.Discard,
-                        new ArrayList<>(action.targets.subList(1, 2))
-                ), -1);
-            }
-            case Seung -> {
+                commitAction(new Action(action.player, Action.ActionType.Discard, new ArrayList<>(action.targets.subList(1, 2))), -1);
+                break;
+            case Gong:
+                Tile gongTarget = action.targets.get(0);
+                hands.get(lastAction.player).freeDiscard(gongTarget);
+
+                if (!hand.have(gongTarget)) {
+                    hand.drawTile(gongTarget);
+                }
+
+                for (int i = 0; i < 4; i++) {
+                    hand.doorify(gongTarget.toString());
+                }
+                break;
+            case Seung:
                 List<Tile> meld = action.targets.subList(0, 2);
                 hands.get(lastAction.player).freeDiscard(meld.get(0));
                 hand.drawTile(meld.get(0));
                 for (Tile tile : meld) {
                     hand.doorify(tile);
                 }
-                commitAction(new Action(
-                        action.player,
-                        Action.ActionType.Discard,
-                        new ArrayList<>(action.targets.subList(3, 4))
-                ), -1);
-            }
+                commitAction(new Action(action.player, Action.ActionType.Discard, new ArrayList<>(action.targets.subList(3, 4))), -1);
+                break;
         }
+
 
         if (time > 0)
             view.graphics.commitWorldState(time);
@@ -159,6 +166,7 @@ public class Game {
     public int getNextPlayer() {
         Action lastAction = getLastMeaningfulAction();
         if (lastAction == null) return 0;
+        if (lastAction.type.equals(Action.ActionType.Gong)) return lastAction.player;
         return lastAction.player == 3 ? 0 : lastAction.player + 1;
     }
 

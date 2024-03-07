@@ -115,7 +115,8 @@ public class Referee extends AbstractReferee {
         Player player = gameManager.getPlayer(game.getNextPlayer());
         System.out.printf("Turn of %d%n", player.getIndex());
 
-        game.commitAction(new Action(player.getIndex(), Action.ActionType.Draw, new ArrayList<>()), 0.33);
+        Action drawAction = new Action(player.getIndex(), Action.ActionType.Draw, new ArrayList<>());
+        game.commitAction(drawAction, 0.33);
 
         ArrayList<Action> unknownActions = game.getUnknownActions(player.getIndex());
 
@@ -130,7 +131,7 @@ public class Referee extends AbstractReferee {
 
         try {
             List<String> outputs = player.getOutputs();
-            game.commitAction(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), null, false), 0.66);
+            game.commitAction(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), drawAction.targets.get(0), false), 0.66);
         } catch (TimeoutException e) {
             player.deactivate(String.format("$%d timeout!", player.getIndex()));
             gameManager.addToGameSummary(String.format("$%d timeout!", player.getIndex()));

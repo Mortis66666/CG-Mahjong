@@ -13,7 +13,7 @@ public class Action {
     public ArrayList<Tile> targets = new ArrayList<>();
 
     public enum ActionType {
-        Draw, Discard, Pong, Seung, Gong, Flower, Bookmark, Pass
+        Draw, Discard, Pong, Seung, Gong, Flower, Bookmark, Pass, Win
     }
 
     public Action(int committer, ActionType action, ArrayList<Tile> targets) {
@@ -51,16 +51,20 @@ public class Action {
 
         List<String> tilesStrings = splitTileStrings(tilesString);
         ArrayList<Tile> targets = new ArrayList<>();
+        String discardString;
+        Tile wishDiscard;
 
         switch (inputChunks[0].toLowerCase()) {
-            case "discard" -> {
-                if (interrupt) throw new InvalidAction("Action DISCARD is prohibited in interrupting turn");
+            case "discard":
+                if (interrupt) {
+                    throw new InvalidAction("Action DISCARD is prohibited in interrupting turn");
+                }
                 if (tilesStrings.size() == 0) {
                     throw new InvalidAction("Tile to discard not provided");
                 }
                 type = ActionType.Discard;
 
-                String discardString = tilesStrings.get(0);
+                discardString = tilesStrings.get(0);
                 Tile tile = hand.searchTile(discardString);
 
                 if (tile == null) {
@@ -68,9 +72,11 @@ public class Action {
                 }
 
                 targets.add(tile);
-            }
-            case "pong" -> {
-                if (!interrupt) throw new InvalidAction("Action PONG is prohibited in non-interrupting turn");
+                break;
+            case "pong":
+                if (!interrupt) {
+                    throw new InvalidAction("Action PONG is prohibited in non-interrupting turn");
+                }
                 if (tilesStrings.size() == 0) {
                     throw new InvalidAction("Tile to discard not provided");
                 }
@@ -79,8 +85,8 @@ public class Action {
                     throw new InvalidAction("Not enough tiles to perform PONG");
                 }
 
-                String discardString = tilesStrings.get(0);
-                Tile wishDiscard = hand.searchTile(discardString);
+                discardString = tilesStrings.get(0);
+                wishDiscard = hand.searchTile(discardString);
 
                 if (wishDiscard == null) {
                     throw new InvalidAction(String.format("Tile to discard (%s) not found", discardString));
@@ -93,17 +99,19 @@ public class Action {
                 type = ActionType.Pong;
                 targets.add(lastDiscardedTile); // Tile that the prev player discard
                 targets.add(wishDiscard); // Tile that player wish to discard
-            }
-            case "seung" -> {
-                if (!interrupt) throw new InvalidAction("Action SEUNG is prohibited in non-interrupting turn");
+                break;
+            case "seung":
+                if (!interrupt) {
+                    throw new InvalidAction("Action SEUNG is prohibited in non-interrupting turn");
+                }
                 if (tilesStrings.size() < 2) {
                     throw new InvalidAction("Tile to seung not provided enough");
                 } else if (tilesStrings.size() < 3) {
                     throw new InvalidAction("Tile to discard not provided");
                 }
 
-                String discardString = tilesStrings.get(2);
-                Tile wishDiscard = hand.searchTile(discardString);
+                discardString = tilesStrings.get(2);
+                wishDiscard = hand.searchTile(discardString);
 
                 if (wishDiscard == null) {
                     throw new InvalidAction(String.format("Tile to discard (%s) not found", discardString));
@@ -129,18 +137,20 @@ public class Action {
                 if (meld[1] - meld[0] != 1 || meld[2] - meld[1] != 1) {
                     throw new InvalidAction("Tiles to perform SEUNG must be consecutive");
                 }
-            }
-            case "gong" -> {
+                break;
+            case "gong":
                 type = ActionType.Gong;
                 targets.add(lastDiscardedTile);
-            }
-            case "pass" -> {
-                if (!interrupt) throw new InvalidAction("Action PASS is prohibited in non-interrupting turn");
+                break;
+            case "pass":
+                if (!interrupt) {
+                    throw new InvalidAction("Action PASS is prohibited in non-interrupting turn");
+                }
                 type = ActionType.Pass;
                 System.out.println("hello");
-
-            }
-            default -> throw new InvalidAction(String.format("Action %s is invalid", inputChunks[1]));
+                break;
+            default:
+                throw new InvalidAction(String.format("Action %s is invalid", inputChunks[1]));
         }
 
         //        if (expected == -2) {
@@ -181,7 +191,8 @@ public class Action {
 
     public int getPriority() {
         switch (type) {
-            case Pong, Gong:
+            case Pong:
+            case Gong:
                 return 300;
             case Seung:
                 return 200;
