@@ -41,12 +41,21 @@ while True:
 	else:
 		last_tile = actions[-1][-1]
 
-		if tiles.count(last_tile) == 2:
+		count = tiles.count(last_tile)
+
+		if count == 3:
+			for i in range(3):
+				tiles.remove(last_tile)
+
+			print("GONG")
+		elif count == 2:
+			for i in range(2):
+				tiles.remove(last_tile)
+
+			discard = choice(tiles)
 			tiles.remove(discard)
 
 			print(f"PONG {discard}")
 
-			for i in range(2):
-				tiles.remove(last_tile)
 		else:
 			print("PASS")
