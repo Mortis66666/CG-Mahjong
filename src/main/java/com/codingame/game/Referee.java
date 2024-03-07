@@ -25,6 +25,7 @@ public class Referee extends AbstractReferee {
 
     @Override
     public void init() {
+        System.out.printf("=======================seed=%d=======================%n", gameManager.getSeed());
         gameManager.setMaxTurns(80);
 
         game = new Game(gameManager.getRandom());
@@ -38,9 +39,9 @@ public class Referee extends AbstractReferee {
                 Player player = gameManager.getPlayer(i);
                 player.sendInputLine(String.valueOf(i));
                 player.sendInputLine(game.hands.get(i).toString());
-
-                game.checkFlowers();
             }
+
+            game.checkFlowers();
         }
 
         if (!alreadyPassed) {

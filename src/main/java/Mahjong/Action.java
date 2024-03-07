@@ -140,6 +140,11 @@ public class Action {
                 break;
             case "gong":
                 type = ActionType.Gong;
+
+                if (!hand.canGong(lastDiscardedTile, interrupt)) {
+                    throw new InvalidAction("Not enough tiles to perform GONG");
+                }
+
                 targets.add(lastDiscardedTile);
                 break;
             case "pass":
@@ -147,7 +152,7 @@ public class Action {
                     throw new InvalidAction("Action PASS is prohibited in non-interrupting turn");
                 }
                 type = ActionType.Pass;
-                System.out.println("hello");
+
                 break;
             default:
                 throw new InvalidAction(String.format("Action %s is invalid", inputChunks[1]));

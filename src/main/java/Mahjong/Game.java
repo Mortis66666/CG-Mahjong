@@ -1,6 +1,7 @@
 package Mahjong;
 
 import Mahjong.view.GameView;
+import Mahjong.view.TileView;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -63,7 +64,7 @@ public class Game {
                 Tile gongTarget = action.targets.get(0);
                 hands.get(lastAction.player).freeDiscard(gongTarget);
 
-                if (!hand.have(gongTarget)) {
+                if (hand.countTiles(gongTarget) == 3) { // gong is from others
                     hand.drawTile(gongTarget);
                 }
 
