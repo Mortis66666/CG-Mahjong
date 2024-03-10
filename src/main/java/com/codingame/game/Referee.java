@@ -9,6 +9,7 @@ import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.MultiplayerGameManager;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
 
 import java.util.*;
@@ -19,6 +20,7 @@ public class Referee extends AbstractReferee {
     // @Inject private SoloGameManager<Player> gameManager;
     @Inject MultiplayerGameManager<Player> gameManager;
     @Inject GraphicEntityModule graphicEntityModule;
+    @Inject TooltipModule tooltipModule;
 
     private Game game;
     private boolean alreadyPassed = false;
@@ -29,7 +31,7 @@ public class Referee extends AbstractReferee {
         gameManager.setMaxTurns(80);
 
         game = new Game(gameManager.getRandom());
-        new GameView(game, graphicEntityModule);
+        new GameView(game, graphicEntityModule, tooltipModule);
 
         for (Player player : gameManager.getActivePlayers()) {
             game.initPlayer(player.getIndex(), player);

@@ -5,21 +5,24 @@ import Mahjong.Hand;
 import Mahjong.Tile;
 import com.codingame.game.Player;
 import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
 
 import java.util.ArrayList;
 
 public class HandView {
     private final Hand hand;
     private final GraphicEntityModule graphics;
+    private final TooltipModule tooltips;
     public Group handSprite;
     public Group discardSprite;
     public Group doorSprite;
     public Group sprite;
 
-    public HandView(Hand hand, GraphicEntityModule graphicEntityModule) {
+    public HandView(Hand hand, GraphicEntityModule graphicEntityModule, TooltipModule tooltipModule) {
         this.hand = hand;
         hand.setView(this);
         this.graphics = graphicEntityModule;
+        this.tooltips = tooltipModule;
 
         sprite = graphics.createGroup();
         handSprite = graphics.createGroup();
@@ -62,7 +65,7 @@ public class HandView {
 
     private void makeTileView() {
         for (Tile tile: hand.getHand()) {
-            new TileView(tile, graphics);
+            new TileView(tile, graphics, tooltips);
         }
     }
 
@@ -83,7 +86,7 @@ public class HandView {
     }
 
     public void drawTile(Tile tile) {
-        TileView tileView = new TileView(tile, graphics);
+        TileView tileView = new TileView(tile, graphics, tooltips);
         handSprite.add(tileView.getSprite());
 
         arrangeSprite();

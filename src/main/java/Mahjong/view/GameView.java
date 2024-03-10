@@ -5,6 +5,7 @@ import Mahjong.Game;
 import Mahjong.Hand;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.World;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
 
 import java.util.ArrayList;
 
@@ -13,12 +14,14 @@ public class GameView {
     private final World world;
     private final Game game;
     public final GraphicEntityModule graphics;
+    private final TooltipModule tooltips;
 
 
-    public GameView(Game game, GraphicEntityModule graphicEntityModule) {
+    public GameView(Game game, GraphicEntityModule graphicEntityModule, TooltipModule tooltipModule) {
         this.game = game;
         game.setView(this);
         this.graphics = graphicEntityModule;
+        this.tooltips = tooltipModule;
         this.world = graphics.getWorld();
 
         drawBackground();
@@ -56,7 +59,7 @@ public class GameView {
         ArrayList<Hand> hands = game.getHands();
         for (int i = 0; i < hands.size(); i++) {
             Hand hand = hands.get(i);
-            HandView handView = new HandView(hand, graphics);
+            HandView handView = new HandView(hand, graphics, tooltips);
 
             handView.setPosition(i);
         }
