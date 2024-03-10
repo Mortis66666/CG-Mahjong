@@ -3,8 +3,8 @@ package Mahjong.view;
 import Mahjong.Constant;
 import Mahjong.Hand;
 import Mahjong.Tile;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Group;
+import com.codingame.game.Player;
+import com.codingame.gameengine.module.entities.*;
 
 import java.util.ArrayList;
 
@@ -29,6 +29,35 @@ public class HandView {
         makeTileView();
         initSprite();
         arrangeSprite();
+    }
+
+    public void drawHud(Player player) {
+        Sprite avatar = graphics.createSprite()
+                .setImage(player.getAvatarToken())
+                .setX(5)
+                .setY(5)
+                .setBaseWidth(Constant.DISCARD_PER_ROW * Constant.TILE_WIDTH / 2 - 10)
+                .setBaseHeight(Constant.DISCARD_PER_ROW * Constant.TILE_WIDTH / 2 - 10);
+
+        Rectangle frame = graphics.createRectangle()
+                .setWidth(Constant.DISCARD_PER_ROW * Constant.TILE_WIDTH / 2)
+                .setHeight(Constant.DISCARD_PER_ROW * Constant.TILE_WIDTH / 2)
+                .setFillColor(player.getColorToken())
+                .setX(0)
+                .setY(0)
+                .setZIndex(-1);
+
+        Text playerName = graphics.createText(player.getNicknameToken())
+                .setFontSize(50)
+                .setFontWeight(Text.FontWeight.BOLD)
+                .setFillColor(player.getColorToken())
+                .setY(Constant.DISCARD_PER_ROW * Constant.TILE_WIDTH / 2);
+
+
+        Group group = graphics.createGroup(frame, avatar, playerName)
+                .setX((13 - Constant.DISCARD_PER_ROW) * Constant.TILE_WIDTH / 2)
+                .setY(Constant.DISCARD_START_ROW);
+        handSprite.add(group);
     }
 
     private void makeTileView() {

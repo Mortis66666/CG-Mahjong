@@ -30,6 +30,10 @@ public class Referee extends AbstractReferee {
 
         game = new Game(gameManager.getRandom());
         new GameView(game, graphicEntityModule);
+
+        for (Player player : gameManager.getActivePlayers()) {
+            game.initPlayer(player.getIndex(), player);
+        }
     }
 
     @Override

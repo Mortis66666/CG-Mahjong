@@ -2,6 +2,7 @@ package Mahjong;
 
 import Mahjong.view.GameView;
 import Mahjong.view.TileView;
+import com.codingame.game.Player;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,6 +26,10 @@ public class Game {
     }
 
     public void setView(GameView view) {this.view = view;}
+
+    public void initPlayer(int playerId, Player player) {
+        hands.get(playerId).view.drawHud(player);
+    }
 
     public void commitAction(Action action, double time) {
         Hand hand = hands.get(action.player);
@@ -86,21 +91,6 @@ public class Game {
 
         if (time > 0)
             view.graphics.commitWorldState(time);
-    }
-
-    private List<String> splitTileStrings(String input) {
-        List<String> pairs = new ArrayList<>();
-
-        // Define the regular expression pattern
-        Pattern pattern = Pattern.compile("[a-z]\\d");
-        Matcher matcher = pattern.matcher(input);
-
-        // Find and extract each matching substring
-        while (matcher.find()) {
-            pairs.add(matcher.group());
-        }
-
-        return pairs;
     }
 
     public Action getLastMeaningfulAction() {
@@ -185,42 +175,6 @@ public class Game {
 
         Tile lastDiscarded = action.targets.get(action.targets.size() - 1);
         return hand.canInterrupt(lastDiscarded);
-    }
-
-    public ArrayList<Integer> getPlayerPriorities() {
-
-        Action action = getLastMeaningfulAction();
-
-        if (action == null) {
-            ArrayList<Integer> result = new ArrayList<>();
-            result.add(0);
-            result.add(-1);
-            result.add(-1);
-            result.add(-1);
-
-            return result;
-        }
-
-        System.out.println(action.targets);
-        int expectedNext = action.player == 3 ? 0 : action.player + 1;
-
-        ArrayList<Integer> scores = new ArrayList<>();
-
-        for (int j = 0; j < 4; j++) {
-            int score = -1;
-            if (j == expectedNext) {
-                score = 0;
-            } else if (j != action.player) {
-                score += hands.get(j).priority(action.targets.get(action.targets.size() - 1));
-            }
-
-            scores.add(score);
-        }
-
-        System.out.print("Score:");
-        System.out.println(scores);
-
-        return scores;
     }
 
     private void makePile() {
