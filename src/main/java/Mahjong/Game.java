@@ -63,7 +63,10 @@ public class Game {
                 for (int i = 0; i < 3; i++) {
                     hand.doorify(pongTarget.toString());
                 }
-                commitAction(new Action(action.player, Action.ActionType.Discard, new ArrayList<>(action.targets.subList(1, 2))), -1);
+
+                ArrayList<Tile> discard = new ArrayList<>(action.targets.subList(1, 2));
+                action.targets.remove(1);
+                commitAction(new Action(action.player, Action.ActionType.Discard, discard), -1);
                 break;
             case Gong:
                 Tile gongTarget = action.targets.get(0);
@@ -84,7 +87,10 @@ public class Game {
                 for (Tile tile : meld) {
                     hand.doorify(tile);
                 }
-                commitAction(new Action(action.player, Action.ActionType.Discard, new ArrayList<>(action.targets.subList(3, 4))), -1);
+
+                ArrayList<Tile> discardSeung = new ArrayList<>(action.targets.subList(3, 4));
+                action.targets.remove(3);
+                commitAction(new Action(action.player, Action.ActionType.Discard, discardSeung), -1);
                 break;
         }
 
