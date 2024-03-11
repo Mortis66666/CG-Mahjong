@@ -4,3 +4,15 @@ gameloop
 read roundType:word(9)
 read numberOfActions:int
 loop numberOfActions read committer:int action:word(7) targetTiles:word(6)
+write DISCARD t
+
+INPUT
+windSeat: aka your player id, ranged from 0~3
+startingTiles: a string of length 26 to represent your starting hand
+roundType: normal | interrupt
+committer: id of the action committer (might be you)
+action: FLOWER | DISCARD | PONG | SEUNG | GONG
+targetTiles: representation of tiles chunked together
+
+OUTPUT
+where t = the representation of the tile you wish to discard

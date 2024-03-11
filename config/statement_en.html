@@ -18,10 +18,7 @@
 			<span>The Goal</span>
 		</h1>
 		<div class="statement-goal-content">
-			The aim of this game is to win.
-			<br>
-			<br>
-			For this question, you will be asked to output a single line as a solution.
+			The aim of this game is to be the first to complete a hand.
 		</div>
 	</div>
 	<!-- RULES -->
@@ -35,64 +32,89 @@
 				<p style="margin-bottom: 15px">
 				<ul>
 					<li><a target="_blank" href="https://youtu.be/_JGsb87PEIo?si=o3EIotHE_6podgRD">A very helpful youtube video</a></li>
-					<li><a target="_blank" href="www.coololdgames.com/tile-games/mahjong/hong-kong/">A very helpful article</a></li>
+					<li><a target="_blank" href="https://www.coololdgames.com/tile-games/mahjong/hong-kong/">A very helpful article</a></li>
 				</ul>
 				</p>
 
-				<p>tiles is represented by 2 characters, first being the representation of the tile type, while the second being the corresponding value</p>
+				<h2>Tiles</h2>
+
+				<p>Each tile is represented by 2 characters, the first being the representation of the tile category, while the second being the value. As mentioned in the tutorial above, there are 4 tiles of each category-value combination.</p>
 
 				<br />
 
-				<p>List of tile types, and their character representation</p>
+				<p>List of tile categories, and their character representation:</p>
 
 				<ul>
-					<li><const>D</const>ot</li>
-					<li><const>B</const>amboo</li>
-					<li><const>C</const>haracter</li>
-					<li><const>W</const>ind</li>
-					<li>d<const>R</const>agon</li>
-					<li><const>F</const>lower</li>
-					<li><const>S</const>eason</li>
+					<li><const>D</const>ot - <const>1</const>~<const>9</const></li>
+					<li><const>B</const>amboo - <const>1</const>~<const>9</const></li>
+					<li><const>C</const>haracter - <const>1</const>~<const>9</const></li>
+					<li><const>W</const>ind - <const>1</const>~<const>4</const></li>
+					<li>d<const>R</const>agon - <const>1</const>~<const>3</const></li>
+					<li><const>F</const>lower - <const>1</const>~<const>4</const></li>
+					<li><const>S</const>eason - <const>1</const>~<const>4</const></li>
 				</ul>
 
-				<p>For the suited tiles, the value will be the numeral value. For example, "5 Dot" is represented as <const>d5</const>, while "1 Bamboo is represented as <const>b1</const>"</p>
+				<p>For the suited tiles (Dot, Bamboo, Character), the value will be the numeral value. For example, "5 Dot" is represented as <const>d5</const>, while "1 Bamboo" is represented as <const>b1.</const></p>
 
 				<br>
 
-				<p>for honour tiles and season tiles, the value represents the index of the tile type, the types are ordered as follow:</p>
+				<p>For the other tile categories, i.e. honour, the value represents the index of the tile type (starting from <const>1</const>), the types are ordered as follow:</p>
 
 				<ul>
 					<li>Wind tile: East, South, West, North</li>
 					<li>Dragon tile: Red dragon, Green dragon, White dragon</li>
-					<li>Flower tile: 梅,兰,竹,菊</li>
-					<li>Season tile: 春,夏,秋,冬</li>
+					<li>Flower tile: Plum, Orchid, Chrysanthemum, Bamboo</li>
+					<li>Season tile: Spring, Summer, Autumn, Winter</li>
 				</ul>
 
-				<p>For example, South will be represented as <const>w2</const>, and White dragon will be represented as <const>r3</const></p>
+				<p>For example, South will be represented as <const>w2</const>, and White dragon will be represented as <const>r3</const>.</p>
 
 				<br>
 
-				<p>Each round, you will receive a list of actions, the actions given is the action made by other players since your last turn, with the actions you committed being on top of the list. You can only get non-draw actions by other players, as it you aren't suppose to know what they drew. Refer below for the action format</p>
+				<h2>Rounds</h2>
+
+				<p>
+				Each round, you will receive a list of actions taken by other players since your last turn, with the actions you committed being given first. You can only get non-draw actions by other players, as you aren't supposed to know what they drew.
+				</p>
 
 				<br>
 
-				<p>there are 2 types of <var>roundType</var>, <const>normal</const> and <const>interrupt</const></p>
+				<p>There are 2 types of <var>roundType</var>, <const>normal</const> and <const>interrupt</const>.
 
 				<br>
 
-				<p>In normal round, the last actions of the list will be about the tile you drew. in normal mode, you can only perform a <const>DISCARD</const> action</p>
+				Every player (including the dealer) receives 13 tiles at the beginning. Gameplay starts with a normal round, the first player (player with <var>windSeat</var>=<const>0</const>) may perform any action allowed in the normal round. After that, the next player will do the same thing. This continues until someone discards a card that <u>at least one player</u> can form a meld with it. The interrupt round then starts, every player that have the opportunity to perform an interrupting action receives input (while those who can't will not receive anything). 
+
+				The game returns to a normal round for the player subsequent to the interrupting player if there is one, or the player subsequent to the discarding player if there is none. Gameplay continues until one player wins by completing the hand.
+				</p>
 
 				<br>
 
-				<p>In interrupt round, the last action of the list will be a discard. It means that you have an oppurtunity to interrupt the normal move sequence, with actions like WIN, GONG, PONG and SEUNG</p>
+				<p>In normal round, the last actions of the list will be about the tile you drew, including the flower actions which are done automatically by the referee. In normal mode, you can perform a <action>DISCARD</action> action, or a <action>GONG</action> action if you are able to perform a <i>Concealed gong</i> or <i>Exposed kong from exposed pong.</i>
 
 				<br>
 
-				<p>Since this is WIP, you still can't do a win/gong action</p>
+				P.S. You can now only perform both of this gong the moment you drew the tile you want to gong with. The option to perform these gong after the draw is still not implemented yet.
+
+				</p>
 
 				<br>
 
-				<p>If you don't want to perform any action, you can output PASS (only available in interrupt round). Even if you output your action, you won't always be able to successfully perform it, as other's might have a higher priority than you. To know if you performed it, you can refer to actions of the next normal round</p>
+				<p>In interrupt round, the last action of the list will be a discard. It means that you have an oppurtunity to interrupt the normal move sequence, with actions like <action>WIN</action>, <action>GONG</action>, <action>PONG</action> and <action>SEUNG</action>.
+
+				<br>
+
+				For <action>PONG</action> and <action>SEUNG</action>, everything will be handle in the same turn, but for <action>GONG</action>, the <action>DRAW</action> action will be given to the player as a <const>normal</const> round in the next round.
+
+				</p>
+
+				<br>
+
+				<p>Since this is WIP, you still can't do a win action.</p>
+
+				<br>
+
+				<p>If you don't want to perform any action, you can output <action>PASS</action> (only available in interrupt round). Even if you output your action, you won't always be able to successfully perform it, as other player might have a higher priority than you. To know if you you have succeeded in performing it, you can refer to actions of the next normal round (as stated earlier, the list of actions start with the actions you performed last round, so if you don't receive that, it means that you didn't successfully commited it).</p>
 			</div>
 		</div>
 	</div>
@@ -117,9 +139,9 @@
 		<!-- Protocol block -->
 		<div class="blk">
 			<div class="title">Initialization input</div>
-			<span class="statement-lineno">Line 1</span> : <var>windSeat</var>, aka your player id.
+			<span class="statement-lineno">Line 1</span> : <var>windSeat</var>, aka your player id. <var>0</var>~<var>3</var>
 			<br />
-			<span class="statement-lineno">Line 2</span> : <var>startingTiles</var>, your starting hand. (representation of tiles chucked together with no spaces, for example: f3d1d8d8b3b6b7c1c6c8r1r1r2)
+			<span class="statement-lineno">Line 2</span> : <var>startingTiles</var>, your starting hand. (representation of tiles chucked together with no spaces, for example: <const>f3d1d8d8b3b6b7c1c6c8r1r1r2</const>)
 			<br />
 		</div>
 
@@ -127,7 +149,7 @@
 		<div class="blk">
 			<div class="title">Input for one game turn</div>
 			<div class="text">
-				<p><span class="statement-lineno">Line 1: </span><var>roundType</var>, normal | interrupt</p>
+				<p><span class="statement-lineno">Line 1: </span><var>roundType</var>, <const>normal</const> | <const>interrupt</const></p>
 				<p><span class="statement-lineno">Line 2: </span>integer <var>numberOfActions</var></p>
 				<p><span class="statement-lineno">Next <var>numberOfActions</var> lines:</span></p>
 				<ul>
@@ -136,13 +158,16 @@
 						string <var>action</var>, can be either:
 
 						<ul>
-							<li><const>Draw</const></li>
-							<li><const>Discard</const></li>
-							<li><const>Pong</const></li>
-							<li><const>Seung</const></li>
-							<li><const>Gong</const></li>
-							<li><const>Flower</const></li>
+							<li><const>FLOWER</const>, this action will be automatically performed by the referee whenever you have a flower tile. At the first round the first player will receive automatic <const>FLOWER</const> action from everyone.</li>
+							<li><const>DRAW</const>, you will only receive this action if <var>committer</var>=your <var>windSeat</var>. <var>targetTiles</var> will only contain one tile, which is the one you drew.</li>
+							<li><const>DISCARD</const>, <var>targetTiles</var> includes a single tile that is discarded by <var>committer</var></li>
+							<li><const>PONG</const>, <var>targetTiles</var> includes a single tile that indicates the tile type used by <var>committer</var></li>
+							<li><const>SEUNG</const>, <var>targetTiles</var> includes three tiles that indicates the tiles used by <var>committer</var></li>
+							<li><const>GONG</const>, <var>targetTiles</var> includes a single tile that indicates the tile type used by <var>committer</var></li>
 						</ul>
+					</li>
+					<li>
+						string <var>targetTiles</var>, representation of the tiles used in the action
 					</li>
 				</ul>
 			</div>
@@ -157,13 +182,17 @@
 				<p>Normal round:</p>
 				<ul>
 					<li><action>DISCARD <var>tile</var></action></li>
+					<li>
+						<action>GONG</action>, gongs the most recent tile you draw. As mentioned above, you still can't gong a specific set that you have earlier, you can only gong the tile you drew this round.
+					</li>
 				</ul>
 				<br>
 				<p>Interruption round:</p>
 				<ul>
 					<li><action>PONG <var>tile</var></action>, <var>tile</var> being the tile you wish to discard</li>
-					<li><action>SEUNG <var>tile1</var><var>tile2</var><var>tile3</var></action>, tile1 and tile2 being the tile you wish to seung with the target tile, and tile3 being the tile you wish to discard</li>
-					<li><action>GONG</action>, not available yet</li>
+					<li><action>SEUNG <var>tile1</var><var>tile2</var><var>tile3</var></action>, tile1 and tile2 being the tile you wish to seung with the target tile, and tile3 being the tile you wish to discard (P.S. there's no space between the 3 tile arguments, just like the one in the input)
+					</li>
+					<li><action>GONG</action>, gong the last discarded tile, the draw process will be handled in the next turn</li>
 					<li><action>WIN</action>, not available yet</li>
 				</ul>
 			</div>
@@ -173,8 +202,6 @@
 		<div class="blk">
 			<div class="title">Constraints</div>
 			<div class="text">
-				<var>windSeat</var> <const>0</const>~<const>3</const><br>
-				<br>
 			</div>
 		</div>
 	</div>
