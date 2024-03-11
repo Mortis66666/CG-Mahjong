@@ -85,7 +85,7 @@ public class Referee extends AbstractReferee {
                     if (cache[playerId]) {
                         try {
                             List<String> outputs = player.getOutputs();
-                            actions.add(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), lastDiscardedTile, true));
+                            actions.add(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), lastMeaningfulAction.player, lastDiscardedTile, true));
                         } catch (TimeoutException e) {
                             player.deactivate(String.format("$%d timeout!", player.getIndex()));
                             System.out.println("timeout bruh");
@@ -138,7 +138,7 @@ public class Referee extends AbstractReferee {
 
         try {
             List<String> outputs = player.getOutputs();
-            game.commitAction(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), drawAction.targets.get(0), false), 0.66);
+            game.commitAction(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), -1, drawAction.targets.get(0), false), 0.66);
         } catch (TimeoutException e) {
             player.deactivate(String.format("$%d timeout!", player.getIndex()));
             gameManager.addToGameSummary(String.format("$%d timeout!", player.getIndex()));

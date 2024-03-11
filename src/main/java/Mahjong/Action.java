@@ -37,7 +37,7 @@ public class Action {
         return pairs;
     }
 
-    public static Action parse(String input, int committer, ArrayList<Hand> hands, Tile lastDiscardedTile, boolean interrupt) throws InvalidAction {
+    public static Action parse(String input, int committer, ArrayList<Hand> hands, int lastCommitter, Tile lastDiscardedTile, boolean interrupt) throws InvalidAction {
         String[] inputChunks = input.split(" ");
 
         //int amount = 0, expected = 0, extraIndex = -1;
@@ -83,6 +83,10 @@ public class Action {
 
                 if (!hand.canPong(lastDiscardedTile)) {
                     throw new InvalidAction("Not enough tiles to perform PONG");
+                }
+
+                if (lastCommitter != (committer == 0 ? 3 : committer - 1)) {
+                    throw new InvalidAction("Can only SEUNG the tiles discarded by the player to your left");
                 }
 
                 discardString = tilesStrings.get(0);
