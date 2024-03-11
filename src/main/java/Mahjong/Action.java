@@ -85,10 +85,6 @@ public class Action {
                     throw new InvalidAction("Not enough tiles to perform PONG");
                 }
 
-                if (lastCommitter != (committer == 0 ? 3 : committer - 1)) {
-                    throw new InvalidAction("Can only SEUNG the tiles discarded by the player to your left");
-                }
-
                 discardString = tilesStrings.get(0);
                 wishDiscard = hand.searchTile(discardString);
 
@@ -112,6 +108,10 @@ public class Action {
                     throw new InvalidAction("Tile to seung not provided enough");
                 } else if (tilesStrings.size() < 3) {
                     throw new InvalidAction("Tile to discard not provided");
+                }
+
+                if (lastCommitter != (committer == 0 ? 3 : committer - 1)) {
+                    throw new InvalidAction("Can only SEUNG the tiles discarded by the player to your left");
                 }
 
                 discardString = tilesStrings.get(2);
