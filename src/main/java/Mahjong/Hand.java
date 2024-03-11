@@ -65,12 +65,12 @@ public class Hand {
         return res;
     }
 
-    public boolean canInterrupt(Tile tile) {
+    public boolean canInterrupt(Tile tile, boolean isToTheLeft) {
         if (canPong(tile)) {
             return true;
         }
 
-        if (canSeung(tile)) {
+        if (canSeung(tile, isToTheLeft)) {
             return true;
         }
 
@@ -88,7 +88,8 @@ public class Hand {
         return countTiles(discardedTile) >= 2;
     }
 
-    public boolean canSeung(Tile discardedTile) {
+    public boolean canSeung(Tile discardedTile, boolean isToTheLeft) {
+        if (!isToTheLeft) return false;
         return (
                 (have(discardedTile.inc(1)) && have(discardedTile.inc(2))) ||
                 (have(discardedTile.inc(-1)) && have(discardedTile.inc(-2))) ||

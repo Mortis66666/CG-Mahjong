@@ -180,7 +180,7 @@ public class Game {
         }
 
         Tile lastDiscarded = action.targets.get(action.targets.size() - 1);
-        return hand.canInterrupt(lastDiscarded);
+        return hand.canInterrupt(lastDiscarded, action.player == (playerId == 0 ? 3 : playerId - 1));
     }
 
     private void makePile() {
