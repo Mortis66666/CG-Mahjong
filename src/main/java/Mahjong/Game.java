@@ -81,7 +81,7 @@ public class Game {
                 }
                 break;
             case Seung:
-                List<Tile> meld = action.targets.subList(0, 2);
+                List<Tile> meld = action.targets.subList(0, 3);
                 hands.get(lastAction.player).freeDiscard(meld.get(0));
                 hand.drawTile(meld.get(0));
                 for (Tile tile : meld) {
