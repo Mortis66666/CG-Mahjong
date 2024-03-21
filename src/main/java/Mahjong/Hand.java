@@ -6,7 +6,65 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.*;
 
+public class Mahjong {
+    public boolean isWinningHand(int[] hand) {
+        // 1 pair 4 triplets
+        if (hand.length > 14) {
+            return false;
+        }
+        int[] cards = new int[10];
+        for (int i = 0; i < hand.length; i++) {
+            cards[hand[i]] += 1;
+        }
+        return helper(cards, 0, 0);
+    }
+
+    private boolean helper(int[] card, int pairCount, int tripletCount) {
+        if (pairCount == 1 && tripletCount == 4) {
+            return true;
+        }
+
+        for (int i = 0; i < card.length; i++) {
+            if (card[i] == 0) {
+                continue;
+            }
+
+            // in trio
+            if (card[i] >= 3) {
+                card[i] -= 3;
+                if (helper(card, pairCount, tripletCount + 1)) {
+                    return true;
+                }
+                card[i] += 3;
+            }
+
+            // in pair
+            if (card[i] >= 2) {
+                card[i] -= 2;
+                if (helper(card, pairCount + 1, tripletCount)) {
+                    return true;
+                }
+                card[i] += 2;
+            }
+
+            // in sequence
+            if (i + 2 <= 9 && card[i] >= 1 && card[i+1] >= 1 && card[i+2] >= 1) {
+                card[i] -= 1;
+                card[i+1] -= 1;
+                card[i+2] -= 1;
+                if (helper(card, pairCount, tripletCount + 1)) {
+                    return true;
+                }
+                card[i] += 1;
+                card[i+1] += 1;
+                card[i+2] += 1;
+            }
+        }
+        return false;
+    }
+}
 public class Hand {
     private final ArrayList<Tile> hand;
     private final ArrayList<Tile> discards = new ArrayList<Tile>();
