@@ -30,11 +30,26 @@
 		<div>
 			<div class="statement-rules-content">
 				<p style="margin-bottom: 15px">
+				<p>Mahjong is a very complex game, it will take a lot of effort to write down the rules in this statement. So instead, here are two sources to learn basic mahjong rules:</p>
 				<ul>
 					<li><a target="_blank" href="https://youtu.be/_JGsb87PEIo?si=o3EIotHE_6podgRD">A very helpful youtube video</a></li>
 					<li><a target="_blank" href="https://www.coololdgames.com/tile-games/mahjong/hong-kong/">A very helpful article</a></li>
 				</ul>
 				</p>
+
+				<h2>Terminology</h2>
+
+				<p>
+				If you looked at both of the resources, you will realise that it uses different terms. This part is to clarify the terms used in this statement.
+				</p>
+
+				<ul>
+					<li>GONG - This term is taken from the video, refers to the action of making a quadraple meld.</li>
+					<li>PONG - Both sources uses the same term, refers to the action of making a triplet meld.
+					</li>
+					<li>SEUNG - Term used in the video, refers to the action to form a meld of three consecutive tiles, in poker terms: a STRAIGHT</li>
+					<li>FAN (/fʌn/) - Indicates the worth of a hand, in this puzzle, it only acts as a requirement to win. </li>
+				</ul>
 
 				<h2>Tiles</h2>
 
@@ -58,7 +73,7 @@
 
 				<br>
 
-				<p>For the other tile categories, i.e. honour, the value represents the index of the tile type (starting from <const>1</const>), the types are ordered as follow:</p>
+				<p>For the other tile categories, the value represents the index of the tile type (starting from <const>1</const>), the types are ordered as follow:</p>
 
 				<ul>
 					<li>Wind tile: East, South, West, North</li>
@@ -74,7 +89,7 @@
 				<h2>Rounds</h2>
 
 				<p>
-				Each round, you will receive a list of actions taken by other players since your last turn, with the actions you committed being given first. You can only get non-draw actions by other players, as you aren't supposed to know what they drew.
+				Each round, you will receive a list of actions taken by other players since your last turn, with the actions you committed <strong>last round</strong> being given first. You can only get non-draw actions by other players, as you aren't supposed to know what they drew.
 				</p>
 
 				<br>
@@ -83,18 +98,18 @@
 
 				<br>
 
-				Every player (including the dealer) receives 13 tiles at the beginning. Gameplay starts with a normal round, the first player (player with <var>windSeat</var>=<const>0</const>) may perform any action allowed in the normal round. After that, the next player will do the same thing. This continues until someone discards a card that <u>at least one player</u> can form a meld with it. The interrupt round then starts, every player that have the opportunity to perform an interrupting action receives input (while those who can't will not receive anything). 
+				Every player (including the dealer) receives 13 tiles at the beginning. Gameplay starts with a normal round, the first player (player with <var>windSeat</var>=<const>0</const>) may perform any action allowed in the normal round. After that, the next player will do the same thing. This continues until someone discards a card that <u>at least one player</u> can form a meld with it. The interrupt round then starts, every player that have the opportunity to perform an interrupting action receives input (while those who can't will not receive anything).
 
 				The game returns to a normal round for the player subsequent to the interrupting player if there is one, or the player subsequent to the discarding player if there is none. Gameplay continues until one player wins by completing the hand.
 				</p>
 
 				<br>
 
-				<p>In normal round, the last actions of the list will be about the tile you drew, including the flower actions which are done automatically by the referee. In normal mode, you can perform a <action>DISCARD</action> action, or a <action>GONG</action> action if you are able to perform a <i>Concealed gong</i> or <i>Exposed kong from exposed pong.</i>
+				<p>In normal round, the last actions of the list will be about the tile you drew, including the <action>FLOWER</action> actions which are done automatically by the referee (both actions will be done in the same turn, just keep in mind that in normal round the last action is always <action>DRAW</action>). In normal mode, you can perform a <action>DISCARD</action> action, or a <action>GONG</action> action if you are able to perform a <i>Concealed gong</i> or <i>Exposed kong from exposed pong</i> (Details below).
 
 				<br>
 
-				P.S. You can now only perform both of this gong the moment you drew the tile you want to gong with. The option to perform these gong after the draw is still not implemented yet.
+				P.S. You can now only perform both type of these gong at the same round you drew the tile you want to gong with. For example, if you have 3 w1 and just drew another w1 in this round, you can only GONG it now and if you don't you will not have a chance to GONG it again, which according to the rules, you should be able to do that. The option to perform these gong after the round is still not implemented yet (WIP). (Ignore the formatting this part will be erased after it is done)
 
 				</p>
 
@@ -104,7 +119,7 @@
 
 				<br>
 
-				For <action>PONG</action> and <action>SEUNG</action>, everything will be handle in the same turn, but for <action>GONG</action>, the <action>DRAW</action> action will be given to the player as a <const>normal</const> round in the next round.
+				For <action>PONG</action> and <action>SEUNG</action>, everything will be handled in the same turn, but for <action>GONG</action> (committed in any round type), the <action>DRAW</action> action will be given to the player as a <const>normal</const> round in the next round.
 
 				</p>
 
@@ -114,7 +129,36 @@
 
 				<br>
 
-				<p>If you don't want to perform any action, you can output <action>PASS</action> (only available in interrupt round). Even if you output your action, you won't always be able to successfully perform it, as other player might have a higher priority than you. To know if you you have succeeded in performing it, you can refer to actions of the next normal round (as stated earlier, the list of actions start with the actions you performed last round, so if you don't receive that, it means that you didn't successfully commited it).</p>
+				<p>If you don't want to perform any action, you can output <action>PASS</action> (only available in interrupt round). Even if you output your action, you won't always be able to successfully perform it, as other player might have a higher priority than you. To know if you have succeeded in performing it, you can refer to actions of the next normal round (as stated earlier, the list of actions start with the actions you performed last round, so if you don't receive that, it means that you didn't successfully commit it).</p>
+
+				<h2>General game rules</h2>
+
+				The video and article above should cover pretty much everything, this part is used to clarify some stuff not mentioned there.
+
+				<ul>
+					<li><action>GONG</action><br>
+
+					There are actually more varieties of <action>GONG</action> than the one stated in the article and video. Quoted from wikipedia:
+
+					<ol><li><i>Concealed gong</i> – After drawing a tile, if a player holds four matching tiles, they may declare a gong. The player can also declare if they hold three matching tiles (concealed pong) and upon drawing a tile completes a set of four.</li>
+
+					<li><i>Exposed gong</i> – If a player can use a discarded tile to complete three matching tiles (concealed pong) in their hand, they can take the piece and reveal an "exposed gong" or "melded gong".</li>
+					
+					<li><i>Exposed gong from exposed pong</i> – If a player already has a melded pong and then later in the game draws the fourth piece from the wall, they may announce (then or later in the game) a gong by placing the fourth tile on top of the middle piece of the melded pong, or all four tiles placed face up in a row. If a pong has been melded a player cannot steal the fourth piece if another player discards it – it must be drawn.</li></ol>
+					</li>
+				</ul>
+
+				<h2>Scoring</h2>
+
+				<p>
+				WIP, scoring is not yet implemented.
+
+				When playing mahjong with money, the money earned by the winner is determined by how good the hand is. In this game, this score will only be used for qualification of winning. In order to declare win, your hand should be worth at least 3 fans.
+
+				<br>
+
+				The list of all possible scorings is available in <a _target="_blank" href="https://en.wikipedia.org/wiki/Hong_Kong_mahjong_scoring_rules#Scoring_table">this Wikipedia page</a>. As you can see there's a lot of scorings that is 100% based on RNG, will specify those scorings that don't exist in this game in the future.
+				</p>
 			</div>
 		</div>
 	</div>
@@ -139,7 +183,7 @@
 		<!-- Protocol block -->
 		<div class="blk">
 			<div class="title">Initialization input</div>
-			<span class="statement-lineno">Line 1</span> : <var>windSeat</var>, aka your player id. <var>0</var>~<var>3</var>
+			<span class="statement-lineno">Line 1</span> : <var>windSeat</var>, aka your player id. <const>0</const>~<const>3</const>
 			<br />
 			<span class="statement-lineno">Line 2</span> : <var>startingTiles</var>, your starting hand. (representation of tiles chucked together with no spaces, for example: <const>f3d1d8d8b3b6b7c1c6c8r1r1r2</const>)
 			<br />
@@ -158,7 +202,7 @@
 						string <var>action</var>, can be either:
 
 						<ul>
-							<li><const>FLOWER</const>, this action will be automatically performed by the referee whenever you have a flower tile. At the first round the first player will receive automatic <const>FLOWER</const> action from everyone.</li>
+							<li><const>FLOWER</const>, this action will be automatically performed by the referee whenever you have a flower tile in your hand. At the first round every player will receive automatic <action>FLOWER</action> action of everyone who have flower tiles in their starting hand. <var>targetTiles</var> will only contain one tile, which is the <const>FLOWER</const>/<const>SEASON</const> tile in action.</li>
 							<li><const>DRAW</const>, you will only receive this action if <var>committer</var>=your <var>windSeat</var>. <var>targetTiles</var> will only contain one tile, which is the one you drew.</li>
 							<li><const>DISCARD</const>, <var>targetTiles</var> includes a single tile that is discarded by <var>committer</var></li>
 							<li><const>PONG</const>, <var>targetTiles</var> includes a single tile that indicates the tile type used by <var>committer</var></li>
@@ -190,9 +234,10 @@
 				<p>Interruption round:</p>
 				<ul>
 					<li><action>PONG <var>tile</var></action>, <var>tile</var> being the tile you wish to discard</li>
-					<li><action>SEUNG <var>tile1</var><var>tile2</var><var>tile3</var></action>, tile1 and tile2 being the tile you wish to seung with the target tile, and tile3 being the tile you wish to discard (P.S. there's no space between the 3 tile arguments, just like the one in the input)
+					<li><action>SEUNG <var>tile1</var><var>tile2</var><var>tile3</var></action>, <var>tile1</var> and <var>tile2</var> being the tiles you wish to seung with the target tile, and <var>tile3</var> being the tile you wish to discard (P.S. there's no space between the 3 tile arguments, just like the one in the input)
 					</li>
 					<li><action>GONG</action>, gong the last discarded tile, the draw process will be handled in the next turn</li>
+					<li><action>PASS</action>, self-explanatory</li>
 					<li><action>WIN</action>, not available yet</li>
 				</ul>
 			</div>
