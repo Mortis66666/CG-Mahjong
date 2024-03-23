@@ -145,7 +145,13 @@ public class Action {
             case "gong":
                 type = ActionType.Gong;
 
-                if (!hand.canGong(lastDiscardedTile, interrupt)) {
+                if (!interrupt && tilesStrings.size() == 0) {
+                    throw new InvalidAction("Tile to GONG not provided");
+                }
+
+                Tile targetTile = interrupt ? lastDiscardedTile : hand.searchTile(tilesStrings.get(0));
+
+                if (!hand.canGong(targetTile, interrupt)) {
                     throw new InvalidAction("Not enough tiles to perform GONG");
                 }
 
