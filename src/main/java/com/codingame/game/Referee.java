@@ -5,9 +5,12 @@ import Mahjong.Game;
 import Mahjong.InvalidAction;
 import Mahjong.Tile;
 import Mahjong.view.GameView;
+import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
+import com.codingame.gameengine.core.GameManager;
 import com.codingame.gameengine.core.MultiplayerGameManager;
+import com.codingame.gameengine.module.endscreen.EndScreenModule;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
@@ -21,14 +24,17 @@ public class Referee extends AbstractReferee {
     @Inject MultiplayerGameManager<Player> gameManager;
     @Inject GraphicEntityModule graphicEntityModule;
     @Inject TooltipModule tooltipModule;
+    @Inject
+    EndScreenModule endScreenModule;
 
     private Game game;
     private boolean alreadyPassed = false;
+    private Player winner = null;
 
     @Override
     public void init() {
         System.out.printf("=======================seed=%d=======================%n", gameManager.getSeed());
-        gameManager.setMaxTurns(80);
+        gameManager.setMaxTurns(300);
 
         game = new Game(gameManager.getRandom());
         new GameView(game, graphicEntityModule, tooltipModule);
@@ -36,6 +42,16 @@ public class Referee extends AbstractReferee {
         for (Player player : gameManager.getActivePlayers()) {
             game.initPlayer(player.getIndex(), player);
         }
+    }
+
+    private void setWinner(Player player) {
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(player.getNicknameToken() + " won!"));
+        player.setScore(1);
+    }
+
+    private void setLoser(Player player, String message) {
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(message));
+        player.setScore(-1);
     }
 
     @Override
@@ -86,16 +102,8 @@ public class Referee extends AbstractReferee {
                         try {
                             List<String> outputs = player.getOutputs();
                             actions.add(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), lastMeaningfulAction.player, lastDiscardedTile, true));
-                        } catch (TimeoutException e) {
-                            player.deactivate(String.format("$%d timeout!", player.getIndex()));
-                            System.out.println("timeout bruh");
-                            gameManager.addToGameSummary(String.format("$%d timeout!", player.getIndex()));
-                            gameManager.endGame();
-                            return;
-                        } catch (InvalidAction e) {
-                            player.deactivate(e.getMessage());
-                            System.out.println(e.getMessage());
-                            gameManager.addToGameSummary(e.getMessage());
+                        } catch (TimeoutException | InvalidAction e) {
+                            setLoser(player, e.getMessage());
                             gameManager.endGame();
                             return;
                         }
@@ -107,7 +115,11 @@ public class Referee extends AbstractReferee {
                 if (actions.size() > 0) { // Interrupting is an option for at least one person
                     Action action = Collections.max(actions, Comparator.comparing(Action::getPriority));
 
-                    if (!action.type.equals(Action.ActionType.Pass)) {
+                    if (action.type.equals(Action.ActionType.Win)) {
+                        setWinner(gameManager.getPlayer(action.player));
+                        setLoser(gameManager.getPlayer(lastMeaningfulAction.player), "");
+                        gameManager.endGame();
+                    } else if (!action.type.equals(Action.ActionType.Pass)) {
                         game.commitAction(action, 0.5);
                     } else {
                         alreadyPassed = true;
@@ -138,22 +150,37 @@ public class Referee extends AbstractReferee {
 
         try {
             List<String> outputs = player.getOutputs();
-            game.commitAction(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), -1, drawAction.targets.get(0), false), 0.66);
-        } catch (TimeoutException e) {
-            player.deactivate(String.format("$%d timeout!", player.getIndex()));
-            gameManager.addToGameSummary(String.format("$%d timeout!", player.getIndex()));
-            gameManager.endGame();
-        } catch (InvalidAction e) {
-            player.deactivate(e.getMessage());
-            gameManager.addToGameSummary(e.getMessage());
+            Action action = Action.parse(outputs.get(0), player.getIndex(), game.getHands(), -1, drawAction.targets.get(0), false);
+
+            if (action.type.equals(Action.ActionType.Win)) {
+                player.setScore(1);
+                gameManager.addToGameSummary(String.format("$%d wins!", player.getIndex()));
+            }
+
+            game.commitAction(action, 0.66);
+        } catch (TimeoutException | InvalidAction e) {
+            setLoser(player, e.getMessage());
             gameManager.endGame();
         }
 
         alreadyPassed = false;
+
+        if (game.pile.size() == 0) {
+            gameManager.addToGameSummary("No more tiles, it's a draw!");
+            gameManager.endGame();
+        }
     }
 
     @Override
     public void onEnd() {
-        System.out.println("over");
+        int[] scores = gameManager.getPlayers().stream().mapToInt(AbstractMultiplayerPlayer::getScore).toArray();
+        String[] texts = new String[2];
+        for (int i = 0; i < scores.length; i++) {
+            if (scores[i] == 10) {
+                texts[i] = "Sik wu!";
+            }
+        }
+        endScreenModule.setScores(scores, texts);
+//        endScreenModule.setTitleRankingsSprite(game.hands.get());;
     }
 }

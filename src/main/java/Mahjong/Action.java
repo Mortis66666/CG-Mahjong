@@ -157,6 +157,15 @@ public class Action {
 
                 targets.add(lastDiscardedTile);
                 break;
+            case "win":
+                type = ActionType.Win;
+
+                if (!hand.canSik(lastDiscardedTile)) {
+                    throw new InvalidAction("Not enough tiles to perform WIN");
+                }
+
+                targets.add(lastDiscardedTile);
+                break;
             case "pass":
                 if (!interrupt) {
                     throw new InvalidAction("Action PASS is prohibited in non-interrupting turn");

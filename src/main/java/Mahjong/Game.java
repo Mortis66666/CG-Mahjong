@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Game {
 
-    private ArrayList<Tile> pile;
+    public ArrayList<Tile> pile;
     private final Random random;
     public ArrayList<Hand> hands;
     private GameView view;
