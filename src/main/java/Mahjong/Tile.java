@@ -59,4 +59,24 @@ public class Tile {
     public boolean equals(Tile other) {
         return toString().equals(other.toString());
     }
+
+    public int toInteger() {
+        int pad = 0;
+        switch (type) {
+            case Season:
+            case Flower:
+                pad = -1;
+                break;
+            case Dot:
+                pad = 10;
+                break;
+            case Bamboo:
+                pad = 20;
+                break;
+            case Dragon:
+                pad = 400;
+        }
+
+        return pad + value;
+    }
 }

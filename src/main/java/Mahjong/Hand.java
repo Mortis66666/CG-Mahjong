@@ -2,10 +2,8 @@ package Mahjong;
 
 import Mahjong.view.HandView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Hand {
     private final ArrayList<Tile> hand;
@@ -22,101 +20,32 @@ public class Hand {
         this.view = view;
     }
 
-    public boolean isFormat(List<Tile> vec) {
-        List<Integer> temp = new ArrayList<>(tiles);
-            while (!temp.isEmpty()) {
-                int a = temp.remove(0);
-                for (int i = 1; i <= 2; i++) {
-                    if (!temp.contains(a + i)) {
-                        return false;
-                    }
-                    temp.remove(Integer.valueOf(a + i));
-                }
-            }
-            return true;
+    public boolean isSevenPairs(List<Integer> vec) {
+        // Check if the hand is a double like aabbccddeeffgg
+        if (vec.size() < 14) return false;
+
+        for (int tile : new HashSet<Integer>(vec)) {
+            if (Collections.frequency(vec, tile) != 2) return false;
+        }
+        return true;
+    }
+
+    public boolean isThirteenOrphans(List<Integer> vec) {
+        // Check if the hand is a thriteen orphans
+        if (vec.size() < 14) return false;
+
+        List<Integer> orphans = new ArrayList<>(Arrays.asList(1, 9, 11, 19, 21, 29, 100, 200, 300, 400, 500, 600, 700));
+
+
+        for (int tile : new HashSet<Integer>(vec)) {
+            if (!orphans.contains(tile)) return false;
         }
 
-        String line = vec.replace(" ", "");
-        List<Integer> hand = new ArrayList<>();
-        List<Integer> temp = new ArrayList<>();
-        for (char i : line.toCharArray()) {
-            if (i == 'd') {
-                hand.addAll(temp);
-                temp.clear();
-            } else if (i == 'b') {
-                for (int j : temp) {
-                    hand.add(j + 10);
-                }
-                temp.clear();
-            } else if (i == 'c') {
-                for (int j : temp) {
-                    hand.add(j + 20);
-                }
-                temp.clear();
-            } else if (i == 'w') {
-                for (int j : temp) {
-                    hand.add(j * 100);
-                }
-                temp.clear();
-            } else {
-                temp.add(Character.getNumericValue(i));
-            }
-        }
-        hand.sort(null);
+        return true;
+    }
 
-        Set<Integer> uniqueHand = new HashSet<>(hand);
-        if (uniqueHand.size() == hand.size()) {
-            return true;
-        }
-
-        Set<Integer> expectedHand = new HashSet<>();
-        expectedHand.add(1);
-        expectedHand.add(9);
-        expectedHand.add(11);
-        expectedHand.add(19);
-        expectedHand.add(21);
-        expectedHand.add(29);
-        expectedHand.add(100);
-        expectedHand.add(200);
-        expectedHand.add(300);
-        expectedHand.add(400);
-        expectedHand.add(500);
-        expectedHand.add(600);
-        expectedHand.add(700);
-        if (uniqueHand.equals(expectedHand)) {
-            return true;
-        }
-
-        List<Integer> pairs = new ArrayList<>();
-        List<Integer> triplets = new ArrayList<>();
-        for (int i : uniqueHand) {
-            if (hand.indexOf(i) != hand.lastIndexOf(i)) {
-                pairs.add(i);
-            }
-            if (hand.lastIndexOf(i) - hand.indexOf(i) >= 2) {
-                triplets.add(i);
-            }
-        }
-        for (int pair : pairs) {
-            List<Integer> hand1 = new ArrayList<>(hand);
-            for (int j = 0; j < 2; j++) {
-                hand1.remove(Integer.valueOf(pair));
-            }
-            if (checkSeq(hand1)) {
-                return true;
-            }
-            List<Integer> hand2 = new ArrayList<>(hand1);
-            for (int triplet : triplets) {
-                if (hand2.indexOf(triplet) != hand2.lastIndexOf(triplet)) {
-                    for (int j = 0; j < 3; j++) {
-                        hand2.remove(Integer.valueOf(triplet));
-                    }
-                    if (checkSeq(hand2)) {
-                        return true;
-                    }
-                }
-            }
-        }
+    public boolean isFormat(List<Integer> vec) {
+        // TODO: Check standard format
         return false;
     }
 
@@ -136,7 +65,15 @@ public class Hand {
         ArrayList<Tile> newHand = new ArrayList<>(hand);
         newHand.add(discardedTile);
 
-        return isFormat(newHand);
+        List<Integer> intTiles = newHand.stream().mapToInt(Tile::toInteger).boxed().collect(Collectors.toList());
+
+        if (isSevenPairs(intTiles)) {
+            return true;
+        } else if (isThirteenOrphans(intTiles)) {
+            return true;
+        }
+
+        return isFormat(intTiles);
     }
 
     public boolean canPong(Tile discardedTile) {
@@ -158,25 +95,6 @@ public class Hand {
         } else {
             return countDoor(discardTile) == 3;
         }
-    }
-
-    public int priority(Tile discardedTile) {
-        // Check if sikwu
-        ArrayList<Tile> newHand = new ArrayList<>(hand);
-        newHand.add(discardedTile);
-
-        if (isFormat(newHand)) {
-            return 400;
-        }
-
-        // Check if pong/gong
-        if (countTiles(discardedTile) >= 2) {
-            System.out.println("Have" + discardedTile);
-            System.out.println(hand);
-            return 300;
-        }
-
-        return 0;
     }
 
     public int countTiles(Tile target) {
