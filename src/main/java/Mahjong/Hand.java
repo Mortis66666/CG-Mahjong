@@ -22,74 +22,82 @@ public class Hand {
         this.view = view;
     }
 
-    public boolean isFormat(List<Tile> vec) {
+        public static boolean checkSeq(List<Integer> tiles) {
         List<Integer> temp = new ArrayList<>(tiles);
-            while (!temp.isEmpty()) {
-                int a = temp.remove(0);
-                for (int i = 1; i <= 2; i++) {
-                    if (!temp.contains(a + i)) {
-                        return false;
-                    }
-                    temp.remove(Integer.valueOf(a + i));
+        while (!temp.isEmpty()) {
+            int a = temp.remove(0);
+            for (int i = 1; i <= 2; i++) {
+                if (!temp.contains(a + i)) {
+                    return false;
                 }
+                temp.remove(Integer.valueOf(a + i));
             }
-            return true;
         }
+        return true;
+    }
 
-        String line = vec.replace(" ", "");
+    public static boolean isFormat(List<String> vec) {
+        List<String> line = new ArrayList<>(vec);
         List<Integer> hand = new ArrayList<>();
         List<Integer> temp = new ArrayList<>();
-        for (char i : line.toCharArray()) {
-            if (i == 'd') {
+        for (String i : line) {
+            if (i.contains("d")) {
                 hand.addAll(temp);
                 temp.clear();
-            } else if (i == 'b') {
+            } else if (i.contains("b")) {
                 for (int j : temp) {
                     hand.add(j + 10);
                 }
                 temp.clear();
-            } else if (i == 'c') {
+            } else if (i.contains("c")) {
                 for (int j : temp) {
                     hand.add(j + 20);
                 }
                 temp.clear();
-            } else if (i == 'w') {
+            } else if (i.contains("w")) {
                 for (int j : temp) {
                     hand.add(j * 100);
                 }
                 temp.clear();
+            } else if (i.contains("r")) {
+                for (int j : temp) {
+                    hand.add((j + 4) * 100);
+                }
+                temp.clear();
             } else {
-                temp.add(Character.getNumericValue(i));
+                temp.add(Integer.parseInt(i));
             }
         }
         hand.sort(null);
+        boolean f = false;
+        boolean t = true;
 
-        Set<Integer> uniqueHand = new HashSet<>(hand);
-        if (uniqueHand.size() == hand.size()) {
-            return true;
+        Set<Integer> handSet = new HashSet<>(hand);
+        if (handSet.size() == hand.size()) {
+            return t;
         }
 
-        Set<Integer> expectedHand = new HashSet<>();
-        expectedHand.add(1);
-        expectedHand.add(9);
-        expectedHand.add(11);
-        expectedHand.add(19);
-        expectedHand.add(21);
-        expectedHand.add(29);
-        expectedHand.add(100);
-        expectedHand.add(200);
-        expectedHand.add(300);
-        expectedHand.add(400);
-        expectedHand.add(500);
-        expectedHand.add(600);
-        expectedHand.add(700);
-        if (uniqueHand.equals(expectedHand)) {
-            return true;
+        Set<Integer> expectedSet = new HashSet<>();
+        expectedSet.add(1);
+        expectedSet.add(9);
+        expectedSet.add(11);
+        expectedSet.add(19);
+        expectedSet.add(21);
+        expectedSet.add(29);
+        expectedSet.add(100);
+        expectedSet.add(200);
+        expectedSet.add(300);
+        expectedSet.add(400);
+        expectedSet.add(500);
+        expectedSet.add(600);
+        expectedSet.add(700);
+        if (handSet.equals(expectedSet)) {
+            return t;
         }
 
         List<Integer> pairs = new ArrayList<>();
         List<Integer> triplets = new ArrayList<>();
-        for (int i : uniqueHand) {
+        for (int i : handSet) {
             if (hand.indexOf(i) != hand.lastIndexOf(i)) {
                 pairs.add(i);
             }
@@ -103,7 +111,7 @@ public class Hand {
                 hand1.remove(Integer.valueOf(pair));
             }
             if (checkSeq(hand1)) {
-                return true;
+                return t;
             }
             List<Integer> hand2 = new ArrayList<>(hand1);
             for (int triplet : triplets) {
@@ -112,12 +120,12 @@ public class Hand {
                         hand2.remove(Integer.valueOf(triplet));
                     }
                     if (checkSeq(hand2)) {
-                        return true;
+                        return t;
                     }
                 }
             }
         }
-        return false;
+        return f;
     }
 
     public boolean canInterrupt(Tile tile, boolean isToTheLeft) {
