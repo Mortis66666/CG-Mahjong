@@ -43,9 +43,52 @@ public class Hand {
 
         return true;
     }
-
-    public boolean isFormat(List<Integer> vec) {
-        // TODO: Check standard format
+    public static boolean checkSeq(List<Integer> tiles) {
+        List<Integer> temp = new ArrayList<>(tiles);
+        while (!temp.isEmpty()) {
+            int a = temp.remove(0);
+            for (int i = 1; i <= 2; i++) {
+                if (!temp.contains(a + i)) {
+                    return false;
+                }
+                temp.remove(Integer.valueOf(a + i));
+            }
+        }
+        return true;
+    }
+    public boolean isFormat(List<Integer> hand) {
+        List<Integer> pairs = new ArrayList<>();
+        List<Integer> triplets = new ArrayList<>();
+        Set<Integer> uniqueHand = new HashSet<>(hand);
+        for (int i : uniqueHand) {
+            if (hand.indexOf(i) != hand.lastIndexOf(i)) {
+                pairs.add(i);
+            }
+            if (hand.lastIndexOf(i) - hand.indexOf(i) >= 2) {
+                triplets.add(i);
+            }
+        }
+        for (int pair : pairs) {
+            List<Integer> hand1 = new ArrayList<>(hand);
+            for (int j = 0; j < 2; j++) {
+                hand1.remove(Integer.valueOf(pair));
+            }
+            if (checkSeq(hand1)) {
+                return true;
+            }
+            List<Integer> hand2 = new ArrayList<>(hand1);
+            for (int triplet : triplets) {
+                if (hand2.indexOf(triplet) != hand2.lastIndexOf(triplet)) {
+                    for (int j = 0; j < 3; j++) {
+                        hand2.remove(Integer.valueOf(triplet));
+                    }
+                    if (checkSeq(hand2)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
         return false;
     }
 
