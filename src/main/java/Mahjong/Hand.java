@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 public class Hand {
     private final ArrayList<Tile> hand;
-    private final ArrayList<Tile> discards = new ArrayList<Tile>();
-    private final ArrayList<Tile> door = new ArrayList<Tile>();
+    private final ArrayList<Tile> discards = new ArrayList<>();
+    private final ArrayList<Tile> door = new ArrayList<>();
     public HandView view;
 
     public Hand(ArrayList<Tile> tiles) {
@@ -24,7 +24,7 @@ public class Hand {
         // Check if the hand is a double like aabbccddeeffgg
         if (vec.size() < 14) return false;
 
-        for (int tile : new HashSet<Integer>(vec)) {
+        for (int tile : new HashSet<>(vec)) {
             if (Collections.frequency(vec, tile) != 2) return false;
         }
         return true;
@@ -37,7 +37,7 @@ public class Hand {
         List<Integer> orphans = new ArrayList<>(Arrays.asList(1, 9, 11, 19, 21, 29, 100, 200, 300, 400, 500, 600, 700));
 
 
-        for (int tile : new HashSet<Integer>(vec)) {
+        for (int tile : new HashSet<>(vec)) {
             if (!orphans.contains(tile)) return false;
         }
 
@@ -88,7 +88,6 @@ public class Hand {
                 }
             }
         }
-        return false;
         return false;
     }
 
