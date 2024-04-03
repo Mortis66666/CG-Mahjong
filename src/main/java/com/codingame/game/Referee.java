@@ -116,7 +116,10 @@ public class Referee extends AbstractReferee {
                     Action action = Collections.max(actions, Comparator.comparing(Action::getPriority));
 
                     if (action.type.equals(Action.ActionType.Win)) {
-                        setWinner(gameManager.getPlayer(action.player));
+                        for (Action a: actions) {
+                            if (a.type.equals(Action.ActionType.Win)) setWinner(gameManager.getPlayer(a.player));
+                        }
+
                         setLoser(gameManager.getPlayer(lastMeaningfulAction.player), "");
                         gameManager.endGame();
                     } else if (!action.type.equals(Action.ActionType.Pass)) {
