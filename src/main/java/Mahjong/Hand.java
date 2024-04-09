@@ -9,6 +9,7 @@ public class Hand {
     private final ArrayList<Tile> hand;
     private final ArrayList<Tile> discards = new ArrayList<>();
     private final ArrayList<Tile> door = new ArrayList<>();
+    private final ArrayList<Meld> doorMelds = new ArrayList<>();
     public HandView view;
 
     public Hand(ArrayList<Tile> tiles) {
@@ -109,13 +110,11 @@ public class Hand {
 
         List<Integer> intTiles = newHand.stream().mapToInt(Tile::toInteger).boxed().collect(Collectors.toList());
 
-        if (isSevenPairs(intTiles)) {
-            return true;
-        } else if (isThirteenOrphans(intTiles)) {
-            return true;
+        if (isThirteenOrphans(intTiles) || isSevenPairs(intTiles) || isFormat(intTiles)) {
+            return FanCalculator.calculate(intTiles, doorMelds) >= Constant.FAN_MIN;
         }
 
-        return isFormat(intTiles);
+        return false;
     }
 
     public boolean canPong(Tile discardedTile) {
@@ -187,6 +186,32 @@ public class Hand {
         return null;
     }
 
+    public void pong(Tile pongTarget) {
+        Meld meld = new Meld(Meld.MeldType.Pong);
+        for (int i = 0; i < 3; i++) {
+            Tile target = searchTile(pongTarget.toString());
+            meld.add(target);
+            doorify(target);
+        }
+    }
+
+    public void gong(Tile gongTarget) {
+        Meld meld = new Meld(Meld.MeldType.Gong);
+        for (int i = 0; i < 4; i++) {
+            Tile target = searchTile(gongTarget.toString());
+            meld.add(target);
+            doorify(target);
+        }
+    }
+
+    public void seung(List<Tile> meldList) {
+        Meld meld = new Meld(Meld.MeldType.Seung);
+        for (Tile target : meldList) {
+            doorify(target);
+            meld.add(target);
+        }
+    }
+
     public boolean have(String tileString) {
         return searchTile(tileString) != null;
     }
@@ -243,12 +268,15 @@ public class Hand {
             return Double.compare(priority1, priority2);
         });
 
-        door.sort((tile1, tile2) -> {
-            // Compare based on priority (smaller value has higher priority)
-            double priority1 = tile1.getPriority();
-            double priority2 = tile2.getPriority();
-            return Double.compare(priority1, priority2);
-        });
+        // Puts all flower in front
+        int flowerCount = 0;
+        for (Tile doorTile : new ArrayList<>(door)) {
+            if (doorTile.isFlower()) {
+                door.remove(doorTile);
+                door.add(flowerCount, doorTile);
+                flowerCount++;
+            }
+        }
     }
 
     public String flowers() {

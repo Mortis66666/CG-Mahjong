@@ -138,7 +138,14 @@ public class Referee extends AbstractReferee {
         System.out.printf("Turn of %d%n", player.getIndex());
 
         Action drawAction = new Action(player.getIndex(), Action.ActionType.Draw, new ArrayList<>());
-        game.commitAction(drawAction, 0.33);
+
+        try {
+            game.commitAction(drawAction, 0.33);
+        } catch (IllegalArgumentException e) {
+            gameManager.addToGameSummary("No more tiles, it's a draw!");
+            gameManager.endGame();
+            return;
+        }
 
         ArrayList<Action> unknownActions = game.getUnknownActions(player.getIndex());
 
@@ -167,11 +174,6 @@ public class Referee extends AbstractReferee {
         }
 
         alreadyPassed = false;
-
-        if (game.pile.size() == 0) {
-            gameManager.addToGameSummary("No more tiles, it's a draw!");
-            gameManager.endGame();
-        }
     }
 
     @Override

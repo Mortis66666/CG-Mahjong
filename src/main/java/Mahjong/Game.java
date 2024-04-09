@@ -60,9 +60,7 @@ public class Game {
                 Tile pongTarget = action.targets.get(0);
                 hands.get(lastAction.player).freeDiscard(pongTarget);
                 hand.drawTile(pongTarget);
-                for (int i = 0; i < 3; i++) {
-                    hand.doorify(pongTarget.toString());
-                }
+                hand.pong(pongTarget);
 
                 ArrayList<Tile> discard = new ArrayList<>(action.targets.subList(1, 2));
                 action.targets.remove(1);
@@ -76,17 +74,14 @@ public class Game {
                     hand.drawTile(gongTarget);
                 }
 
-                for (int i = 0; i < 4; i++) {
-                    hand.doorify(gongTarget.toString());
-                }
+                hand.gong(gongTarget);
                 break;
             case Seung:
                 List<Tile> meld = action.targets.subList(0, 3);
                 hands.get(lastAction.player).freeDiscard(meld.get(0));
                 hand.drawTile(meld.get(0));
-                for (Tile tile : meld) {
-                    hand.doorify(tile);
-                }
+
+                hand.seung(meld);
 
                 ArrayList<Tile> discardSeung = new ArrayList<>(action.targets.subList(3, 4));
                 action.targets.remove(3);
@@ -209,7 +204,7 @@ public class Game {
     }
 
     private void makeHands() {
-        hands = new ArrayList<Hand>();
+        hands = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             ArrayList<Tile> handTiles = new ArrayList<Tile>();
 
@@ -232,7 +227,7 @@ public class Game {
         }
     }
 
-    public Tile drawTile() {
+    public Tile drawTile() throws IllegalArgumentException {
         int randomIndex = random.nextInt(pile.size());
         return pile.remove(randomIndex);
     }
