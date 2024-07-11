@@ -7,18 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import Mahjong.Meld.MeldType;
+
 class FanCalculatorTest {
 
-    List<Meld> tie(Integer[] tiles, Meld.MeldType[] types) {
+    List<Meld> tie(Integer[] tiles, MeldType[] types) {
         List<Meld> melds = new ArrayList<>();
         int counter = 0;
 
-        for (Meld.MeldType type : types) {
+        for (MeldType type : types) {
             Meld meld = new Meld(type);
 
             int inc = 3;
 
-            if (type == Meld.MeldType.Pair) {
+            if (type == MeldType.Pair) {
                 inc = 2;
             }
 
@@ -38,9 +40,9 @@ class FanCalculatorTest {
         // Arrange: Prepare the data for your test
 
         Integer[] handTiles = {16, 17, 18, 10, 11, 12, 1, 2, 3, 26, 27, 28, 5, 5};
-        Meld.MeldType[] handTypes = {Meld.MeldType.Seung, Meld.MeldType.Seung, Meld.MeldType.Seung, Meld.MeldType.Pair};
+        MeldType[] handTypes = {MeldType.Seung, MeldType.Seung, MeldType.Seung, MeldType.Seung, MeldType.Pair};
 
-        // TODO: Add some Meld objects to hand and door
+        // Add some Meld objects to hand and door
 
         List<Meld> hand = tie(handTiles, handTypes);
         List<Meld> door = new ArrayList<>();
@@ -51,5 +53,28 @@ class FanCalculatorTest {
         // Assert: Check if the result is as expected
         assertEquals(1, fanCalculator.fan);
         assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.COMMON_HAND));
+    }
+
+    @Test
+    void testAllTriplets() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {16, 16, 16, 100, 100, 100, 26, 26, 26, 500, 500};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Pair};
+
+        Integer[] doorTiles = {7, 7, 7};
+        MeldType[] doorTypes = {MeldType.Pong};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = tie(doorTiles, doorTypes);
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        assertEquals(3, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.ALL_TRIPLETS));
     }
 }

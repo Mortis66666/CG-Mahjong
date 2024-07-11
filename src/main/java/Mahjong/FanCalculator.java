@@ -17,9 +17,12 @@ public class FanCalculator {
     public final List<Flag> flags = new ArrayList<>();
     public int fan = 0;
 
-    private int doorPongCount = 0,
+    private int
+            doorTripletsCount = 0,
+            doorPongCount = 0,
             doorSeungCount = 0,
             doorGongCount = 0,
+            tripletsCount = 0,
             pongCount = 0,
             seungCount = 0,
             gongCount = 0,
@@ -61,13 +64,15 @@ public class FanCalculator {
     private void make_stats() {
         Set<Tile.TileType> types = new HashSet<>();
 
-        for (Meld handMeld: hand) {
+        for (Meld handMeld : hand) {
             switch (handMeld.type) {
                 case Pong:
                     pongCount++;
+                    tripletsCount++;
                     break;
                 case Seung:
                     seungCount++;
+                    tripletsCount++;
                     break;
                 case Gong:
                     gongCount++;
@@ -88,13 +93,15 @@ public class FanCalculator {
             types.add(handMeld.getTileSuit());
         }
 
-        for (Meld doorMeld: door) {
+        for (Meld doorMeld : door) {
             switch (doorMeld.type) {
                 case Pong:
                     doorPongCount++;
+                    doorTripletsCount++;
                     break;
                 case Seung:
                     doorSeungCount++;
+                    doorTripletsCount++;
                     break;
                 case Gong:
                     doorGongCount++;
@@ -111,13 +118,11 @@ public class FanCalculator {
 
             types.add(doorMeld.getTileSuit());
         }
-
-        suitCount = types.size();
     }
 
     private void commonHand() {
         // Check if every meld is a seung, if true: common hand
-        if (Math.max(hand.size() - 1, 0) == seungCount && Math.max(door.size() - 1, 0) == doorSeungCount) {
+        if (tripletsCount == seungCount && doorTripletsCount == doorSeungCount) {
             flags.add(Flag.COMMON_HAND);
             fan += 1;
         }
@@ -125,7 +130,7 @@ public class FanCalculator {
 
     private void allTriplets() {
         // Check if all melds are triplets
-        if (hand.size() == pongCount && door.size() == doorPongCount) {
+        if (tripletsCount == pongCount && doorTripletsCount == doorPongCount) {
             flags.add(Flag.ALL_TRIPLETS);
             fan += 3;
         }
