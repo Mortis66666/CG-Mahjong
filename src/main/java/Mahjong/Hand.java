@@ -44,20 +44,30 @@ public class Hand {
 
         return true;
     }
-    public static boolean checkSeq(List<Integer> tiles) {
+    private List<Meld> checkSeq(List<Integer> tiles) {
         List<Integer> temp = new ArrayList<>(tiles);
+        ArrayList<Meld> res = new ArrayList<>();
+
         while (!temp.isEmpty()) {
             int a = temp.remove(0);
+            Meld meld = new Meld(Meld.MeldType.Seung);
+            meld.add(new Tile(a));
+
             for (int i = 1; i <= 2; i++) {
                 if (!temp.contains(a + i)) {
-                    return false;
+                    return null;
                 }
                 temp.remove(Integer.valueOf(a + i));
+                meld.add(new Tile(a + i));
             }
+
+            res.add(meld);
         }
-        return true;
+
+        return res;
     }
-    public boolean isFormat(List<Integer> hand) {
+
+    public List<List<Meld>> allPossibleWins(List<Integer> hand) {
         List<Integer> pairs = new ArrayList<>();
         List<Integer> triplets = new ArrayList<>();
         Set<Integer> uniqueHand = new HashSet<>(hand);
@@ -69,27 +79,49 @@ public class Hand {
                 triplets.add(i);
             }
         }
+
+        List<List<Meld>> res = new ArrayList<>();
+
         for (int pair : pairs) {
+            List<Meld> melds = new ArrayList<>();
+
             List<Integer> hand1 = new ArrayList<>(hand);
+            Meld pairMeld = new Meld(Meld.MeldType.Pair);
             for (int j = 0; j < 2; j++) {
                 hand1.remove(Integer.valueOf(pair));
+                pairMeld.add(new Tile(pair));
             }
-            if (checkSeq(hand1)) {
-                return true;
+            melds.add(pairMeld);
+
+            List<Meld> seqMeld = checkSeq(hand1);
+            if (seqMeld != null) {
+                melds.addAll(seqMeld);
+                res.add(melds);
+                continue;
             }
+
             List<Integer> hand2 = new ArrayList<>(hand1);
             for (int triplet : triplets) {
                 if (hand2.indexOf(triplet) != hand2.lastIndexOf(triplet)) {
+                    Meld tripletMeld = new Meld(Meld.MeldType.Pong);
                     for (int j = 0; j < 3; j++) {
                         hand2.remove(Integer.valueOf(triplet));
+                        tripletMeld.add(new Tile(triplet));
                     }
-                    if (checkSeq(hand2)) {
-                        return true;
+                    melds.add(tripletMeld);
+
+                    List<Meld> replicateMelds = new ArrayList<>(melds);
+
+                    List<Meld> seqMelds2 = checkSeq(hand2);
+                    if (seqMelds2 != null) {
+                        replicateMelds.addAll(seqMelds2);
+                        res.add(replicateMelds);
                     }
                 }
             }
         }
-        return false;
+
+        return res;
     }
 
     public boolean canInterrupt(Tile tile, boolean isToTheLeft) {
@@ -104,17 +136,32 @@ public class Hand {
         return canSik(tile);
     }
 
-    public boolean canSik(Tile discardedTile) {
+    public FanCalculator getCalculator(Tile discardedTile) {
         ArrayList<Tile> newHand = new ArrayList<>(hand);
         newHand.add(discardedTile);
 
-        List<Integer> intTiles = newHand.stream().mapToInt(Tile::toInteger).boxed().collect(Collectors.toList());
+        List<Integer> hand = newHand.stream().mapToInt(Tile::toInteger).boxed().collect(Collectors.toList());
 
-        if (isThirteenOrphans(intTiles) || isSevenPairs(intTiles) || isFormat(intTiles)) {
-            return FanCalculator.calculate(intTiles, doorMelds) >= Constant.FAN_MIN;
+        // Cheap check first
+        if (isThirteenOrphans(hand)) {
+            return new FanCalculator(13);
         }
 
-        return false;
+        if (isSevenPairs(hand)) {
+            return new FanCalculator(4);
+        }
+
+        // Check for all possible wins, and return the best one
+        FanCalculator best = new FanCalculator(0);
+        for (List<Meld> melds : allPossibleWins(hand)) {
+            FanCalculator fanCalculator = new FanCalculator(melds, doorMelds);
+
+            if (fanCalculator.fan > best.fan) {
+                best = fanCalculator;
+            }
+        }
+
+        return best;
     }
 
     public boolean canPong(Tile discardedTile) {
@@ -136,6 +183,11 @@ public class Hand {
         } else {
             return countDoor(discardTile) == 3;
         }
+    }
+
+    public boolean canSik(Tile discardTile) {
+        FanCalculator calculator = getCalculator(discardTile);
+        return calculator.fan >= Constant.FAN_MIN;
     }
 
     public int countTiles(Tile target) {

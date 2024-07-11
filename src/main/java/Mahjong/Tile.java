@@ -2,8 +2,6 @@ package Mahjong;
 
 import Mahjong.view.TileView;
 
-import Mahjong.view.TileView;
-
 public class Tile {
 
     public int value;
@@ -77,6 +75,34 @@ public class Tile {
                 pad = 400;
         }
 
-        return pad + value;
+        int reprValue = value;
+
+        if (type.equals(TileType.Wind) || type.equals(TileType.Dragon)) {
+            reprValue *= 100;
+        }
+
+        return pad + reprValue;
+    }
+
+    public Tile(int value) {
+        // value being the result of toInteger()
+        // Reverse the toInteger() function
+
+        if (value < 10) {
+            type = TileType.Character;
+            this.value = value;
+        } else if (value < 20) {
+            type = TileType.Dot;
+            this.value = value - 20;
+        } else if (value < 30) {
+            type = TileType.Bamboo;
+            this.value = value - 30;
+        } else if (value <= 400) {
+            type = TileType.Wind;
+            this.value = value / 100;
+        } else {
+            type = TileType.Dragon;
+            this.value = value / 100 - 4;
+        }
     }
 }
