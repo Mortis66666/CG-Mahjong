@@ -117,7 +117,7 @@ public class FanCalculator {
 
     private void commonHand() {
         // Check if every meld is a seung, if true: common hand
-        if (hand.size() == seungCount && door.size() == doorSeungCount) {
+        if (Math.max(hand.size() - 1, 0) == seungCount && Math.max(door.size() - 1, 0) == doorSeungCount) {
             flags.add(Flag.COMMON_HAND);
             fan += 1;
         }

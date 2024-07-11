@@ -245,6 +245,8 @@ public class Hand {
             meld.add(target);
             doorify(target);
         }
+
+        doorMelds.add(meld);
     }
 
     public void gong(Tile gongTarget) {
@@ -254,6 +256,8 @@ public class Hand {
             meld.add(target);
             doorify(target);
         }
+
+        doorMelds.add(meld);
     }
 
     public void seung(List<Tile> meldList) {
@@ -262,6 +266,8 @@ public class Hand {
             doorify(target);
             meld.add(target);
         }
+
+        doorMelds.add(meld);
     }
 
     public boolean have(String tileString) {
