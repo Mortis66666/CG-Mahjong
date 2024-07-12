@@ -1,12 +1,9 @@
 package Mahjong;
 
 import Mahjong.view.GameView;
-import Mahjong.view.TileView;
 import com.codingame.game.Player;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Game {
 
@@ -15,6 +12,7 @@ public class Game {
     public ArrayList<Hand> hands;
     private GameView view;
     public ArrayList<Action> actions;
+    private List<List<String>> riggedHands = new ArrayList<>();
 
     public Game(Random random) {
         this.random = random;
@@ -25,7 +23,20 @@ public class Game {
         makeHands();
     }
 
-    public void setView(GameView view) {this.view = view;}
+    public Game(Random random, List<List<String>> riggedHands) {
+        // Debugging purpose
+        this.random = random;
+        this.riggedHands = riggedHands;
+
+        actions = new ArrayList<Action>();
+
+        makePile();
+        makeHands();
+    }
+
+    public void setView(GameView view) {
+        this.view = view;
+    }
 
     public void initPlayer(int playerId, Player player) {
         hands.get(playerId).view.drawHud(player);
@@ -182,30 +193,41 @@ public class Game {
         pile = new ArrayList<Tile>();
 
         for (int i = 0; i < 4; i++) {
+            pile.add(new Tile(i + 1, Tile.TileType.Flower));
+            pile.add(new Tile(i + 1, Tile.TileType.Season));
+
             for (int j = 1; j < 10; j++) {
                 pile.add(new Tile(j, Tile.TileType.Character));
                 pile.add(new Tile(j, Tile.TileType.Bamboo));
                 pile.add(new Tile(j, Tile.TileType.Dot));
-            }
 
-            for (int j = 1; j < 5; j++) {
-                pile.add(new Tile(j, Tile.TileType.Wind));
-            }
 
-            for (int j = 1; j < 4; j++) {
-                pile.add(new Tile(j, Tile.TileType.Dragon));
-            }
-        }
+                if (j < 5)
+                    pile.add(new Tile(j, Tile.TileType.Wind));
 
-        for (int i = 1; i < 5; i++) {
-            pile.add(new Tile(i, Tile.TileType.Flower));
-            pile.add(new Tile(i, Tile.TileType.Season));
+                if (j < 4)
+                    pile.add(new Tile(j, Tile.TileType.Dragon));
+            }
         }
     }
 
     private void makeHands() {
+        int riggedAmount = riggedHands.size();
+
         hands = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
+
+        for (List<String> strings : riggedHands) {
+            ArrayList<Tile> handTiles = new ArrayList<Tile>();
+
+            for (String riggedTile : strings) {
+                handTiles.add(drawRiggedTile(riggedTile));
+            }
+
+            Hand hand = new Hand(handTiles);
+            hands.add(hand);
+        }
+
+        for (int i = 0; i < 4 - riggedAmount; i++) {
             ArrayList<Tile> handTiles = new ArrayList<Tile>();
 
             for (int j = 0; j < 13; j++) {
@@ -215,6 +237,16 @@ public class Game {
             Hand hand = new Hand(handTiles);
             hands.add(hand);
         }
+    }
+
+    private Tile drawRiggedTile(String tile) {
+        for (int i = 0; i < pile.size(); i++) {
+            if (Objects.equals(pile.get(i).toString(), tile)) {
+                return pile.remove(i);
+            }
+        }
+
+        return null;
     }
 
     public void checkFlowers() {
