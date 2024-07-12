@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import Mahjong.Tile.TileType;
+
 public class FanCalculator {
 
     public enum Flag {
@@ -30,7 +32,7 @@ public class FanCalculator {
             windCount = 0,
             dragonCount = 0;
 
-    private Tile.TileType eyeType;
+    private TileType eyeType;
 
 
     public FanCalculator(List<Meld> hand, List<Meld> door) {
@@ -43,8 +45,8 @@ public class FanCalculator {
 
         commonHand();
         allTriplets();
-        mixedOneSuit();
-        allOneSuit();
+        if (!mixedOneSuit())
+            allOneSuit();
         allHonorTiles();
     }
 
@@ -62,7 +64,7 @@ public class FanCalculator {
     }
 
     private void make_stats() {
-        Set<Tile.TileType> types = new HashSet<>();
+        Set<TileType> types = new HashSet<>();
 
         for (Meld handMeld : hand) {
             switch (handMeld.type) {
@@ -83,14 +85,15 @@ public class FanCalculator {
             }
 
             if (handMeld.type != Meld.MeldType.Pair) {
-                if (handMeld.getTileSuit() == Tile.TileType.Wind) {
+                if (handMeld.getTileSuit() == TileType.Wind) {
                     windCount++;
-                } else if (handMeld.getTileSuit() == Tile.TileType.Dragon) {
+                } else if (handMeld.getTileSuit() == TileType.Dragon) {
                     dragonCount++;
                 }
             }
 
-            types.add(handMeld.getTileSuit());
+            if (handMeld.getTileSuit() != TileType.Wind && handMeld.getTileSuit() != TileType.Dragon)
+                types.add(handMeld.getTileSuit());
         }
 
         for (Meld doorMeld : door) {
@@ -109,15 +112,18 @@ public class FanCalculator {
             }
 
             if (doorMeld.type != Meld.MeldType.Pair) {
-                if (doorMeld.getTileSuit() == Tile.TileType.Wind) {
+                if (doorMeld.getTileSuit() == TileType.Wind) {
                     windCount++;
-                } else if (doorMeld.getTileSuit() == Tile.TileType.Dragon) {
+                } else if (doorMeld.getTileSuit() == TileType.Dragon) {
                     dragonCount++;
                 }
             }
 
-            types.add(doorMeld.getTileSuit());
+            if (doorMeld.getTileSuit() != TileType.Wind && doorMeld.getTileSuit() != TileType.Dragon)
+                types.add(doorMeld.getTileSuit());
         }
+        
+        suitCount = types.size();
     }
 
     private void commonHand() {
@@ -136,12 +142,15 @@ public class FanCalculator {
         }
     }
 
-    private void mixedOneSuit() {
+    private boolean mixedOneSuit() {
         // Check if all melds are of the same suit (with mixed winds and dragons)
         if (suitCount == 1 && windCount + dragonCount > 0) {
             flags.add(Flag.MIXED_ONE_SUIT);
             fan += 3;
+            return true;
         }
+
+        return false;
     }
 
     private void allOneSuit() {
@@ -154,7 +163,7 @@ public class FanCalculator {
 
     private void allHonorTiles() {
         // Check if all melds are honor tiles
-        if (windCount + dragonCount == 4 && (eyeType == Tile.TileType.Wind || eyeType == Tile.TileType.Dragon)) {
+        if (windCount + dragonCount == 4 && (eyeType == TileType.Wind || eyeType == TileType.Dragon)) {
             flags.add(Flag.ALL_HONOR_TILES);
             fan += 10;
         }
