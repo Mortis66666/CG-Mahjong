@@ -44,10 +44,10 @@ public class FanCalculator {
         make_stats();
 
         commonHand();
-        allTriplets();
+        if (!allHonorTiles())
+            allTriplets();
         if (!mixedOneSuit())
             allOneSuit();
-        allHonorTiles();
     }
 
     public FanCalculator(int value) {
@@ -122,7 +122,7 @@ public class FanCalculator {
             if (doorMeld.getTileSuit() != TileType.Wind && doorMeld.getTileSuit() != TileType.Dragon)
                 types.add(doorMeld.getTileSuit());
         }
-        
+
         suitCount = types.size();
     }
 
@@ -161,11 +161,14 @@ public class FanCalculator {
         }
     }
 
-    private void allHonorTiles() {
+    private boolean allHonorTiles() {
         // Check if all melds are honor tiles
         if (windCount + dragonCount == 4 && (eyeType == TileType.Wind || eyeType == TileType.Dragon)) {
             flags.add(Flag.ALL_HONOR_TILES);
             fan += 10;
+            return true;
         }
+
+        return false;
     }
 }

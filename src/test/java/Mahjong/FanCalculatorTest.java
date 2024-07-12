@@ -120,4 +120,24 @@ class FanCalculatorTest {
         assertEquals(7, fanCalculator.fan);
         assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.ALL_ONE_SUIT));
     }
+
+    @Test
+    void testAllHonorTiles() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {100, 100, 100, 200, 200, 200, 300, 300, 300, 400, 400, 400, 500, 500};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Pair};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = new ArrayList<>();
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        assertEquals(10, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.ALL_HONOR_TILES));
+    }
 }
