@@ -44,10 +44,10 @@ public class FanCalculator {
         make_stats();
 
         commonHand();
-        if (!allHonorTiles())
-            allTriplets();
-        if (!mixedOneSuit())
-            allOneSuit();
+        if (!allHonorTiles()) allTriplets();
+        if (!mixedOneSuit()) allOneSuit();
+        if (!greatDragons()) smallDragons();
+        if (!greatWinds()) smallWinds();
     }
 
     public FanCalculator(int value) {
@@ -166,6 +166,44 @@ public class FanCalculator {
         if (windCount + dragonCount == 4 && (eyeType == TileType.Wind || eyeType == TileType.Dragon)) {
             flags.add(Flag.ALL_HONOR_TILES);
             fan += 10;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void smallDragons() {
+        // Check if there's melds of 2 dragons and a pair of the 3rd dragon
+        if (dragonCount == 2 && (eyeType == TileType.Dragon)) {
+            flags.add(Flag.SMALL_DRAGONS);
+            fan += 5;
+        }
+    }
+
+    private boolean greatDragons() {
+        // Check if there's melds of 3 dragons
+        if (dragonCount == 3) {
+            flags.add(Flag.GREAT_DRAGONS);
+            fan += 8;
+            return true;
+        }
+
+        return false;
+    }
+
+    private void smallWinds() {
+        // Check if there's melds of 3 winds and a pair of the 4th wind
+        if (windCount == 3 && (eyeType == TileType.Wind)) {
+            flags.add(Flag.SMALL_WINDS);
+            fan += 6;
+        }
+    }
+
+    private boolean greatWinds() {
+        // Check if there's melds of 4 winds
+        if (windCount == 4) {
+            flags.add(Flag.GREAT_WINDS);
+            fan += 13;
             return true;
         }
 

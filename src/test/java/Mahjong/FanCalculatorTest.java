@@ -140,4 +140,86 @@ class FanCalculatorTest {
         assertEquals(10, fanCalculator.fan);
         assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.ALL_HONOR_TILES));
     }
+
+    @Test
+    void testSmallDragons() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {500, 500, 500, 700, 700, 700, 16, 17, 18, 8, 8, 8, 600, 600};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Seung, MeldType.Pong, MeldType.Pair};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = new ArrayList<>();
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        assertEquals(5, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.SMALL_DRAGONS));
+    }
+
+    @Test
+    void testGreatDragons() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {500, 500, 500, 700, 700, 700, 600, 600, 600, 25, 26, 27, 11, 11};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Seung, MeldType.Pair};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = new ArrayList<>();
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        assertEquals(8, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.GREAT_DRAGONS));
+    }
+
+    @Test
+    void testSmallWinds() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {100, 100, 100, 200, 200, 200, 300, 300, 300, 16, 17, 18, 400, 400};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Seung, MeldType.Pair};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = new ArrayList<>();
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        assertEquals(6 + 3, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.SMALL_WINDS));
+    }
+
+    @Test
+    void testGreatWinds() {
+        // Arrange: Prepare the data for your test
+
+        Integer[] handTiles = {100, 100, 100, 200, 200, 200, 300, 300, 300, 400, 400, 400, 7, 7};
+        MeldType[] handTypes = {MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Pong, MeldType.Pair};
+
+        // Add some Meld objects to hand and door
+
+        List<Meld> hand = tie(handTiles, handTypes);
+        List<Meld> door = new ArrayList<>();
+
+        // Act: Call the method you want to test
+        FanCalculator fanCalculator = new FanCalculator(hand, door);
+
+        // Assert: Check if the result is as expected
+        System.out.println(fanCalculator.flags);
+
+        assertEquals(13 + 3 + 3, fanCalculator.fan);
+        assertTrue(fanCalculator.flags.contains(FanCalculator.Flag.GREAT_WINDS));
+    }
 }
