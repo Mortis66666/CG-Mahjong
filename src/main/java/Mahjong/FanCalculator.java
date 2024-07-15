@@ -10,7 +10,7 @@ import Mahjong.Tile.TileType;
 public class FanCalculator {
 
     public enum Flag {
-        THIRTEEN_ORPHANS, SEVEN_PAIRS, COMMON_HAND, ALL_TRIPLETS, MIXED_ONE_SUIT, ALL_ONE_SUIT, ALL_HONOR_TILES,
+        THIRTEEN_ORPHANS, SEVEN_PAIRS, COMMON_HAND, ALL_IN_TRIPLETS, MIXED_ONE_SUIT, ALL_ONE_SUIT, ALL_HONOR_TILES,
         SMALL_DRAGONS, GREAT_DRAGONS, SMALL_WINDS, GREAT_WINDS, ALL_GONGS, SELF_TRIPLET, ORPHANS, NINE_GATES
     }
 
@@ -44,7 +44,7 @@ public class FanCalculator {
         make_stats();
 
         commonHand();
-        if (!allHonorTiles()) allTriplets();
+        if (!allHonorTiles()) allInTriplets();
         if (!mixedOneSuit()) allOneSuit();
         if (!greatDragons()) smallDragons();
         if (!greatWinds()) smallWinds();
@@ -134,10 +134,10 @@ public class FanCalculator {
         }
     }
 
-    private void allTriplets() {
+    private void allInTriplets() {
         // Check if all melds are triplets
         if (tripletsCount == pongCount && doorTripletsCount == doorPongCount) {
-            flags.add(Flag.ALL_TRIPLETS);
+            flags.add(Flag.ALL_IN_TRIPLETS);
             fan += 3;
         }
     }
