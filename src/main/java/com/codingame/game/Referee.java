@@ -15,15 +15,19 @@ import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
 public class Referee extends AbstractReferee {
     // Uncomment the line below and comment the line under it to create a Solo Game
     // @Inject private SoloGameManager<Player> gameManager;
-    @Inject MultiplayerGameManager<Player> gameManager;
-    @Inject GraphicEntityModule graphicEntityModule;
-    @Inject TooltipModule tooltipModule;
+    @Inject
+    MultiplayerGameManager<Player> gameManager;
+    @Inject
+    GraphicEntityModule graphicEntityModule;
+    @Inject
+    TooltipModule tooltipModule;
     @Inject
     EndScreenModule endScreenModule;
 
@@ -36,6 +40,12 @@ public class Referee extends AbstractReferee {
         System.out.printf("=======================seed=%d=======================%n", gameManager.getSeed());
         gameManager.setMaxTurns(300);
 
+        // Make a rigged hand
+//        List<List<String>> riggedHands = new ArrayList<>();
+//        String[] riggedHand = {"b1", "b1", "b1", "w2", "w2", "w2", "d3", "d4", "d5", "c6", "c6", "c6", "c1"};
+//        riggedHands.add(Arrays.asList(riggedHand));
+//
+//        game = new Game(gameManager.getRandom(), riggedHands);
         game = new Game(gameManager.getRandom());
         new GameView(game, graphicEntityModule, tooltipModule);
 
@@ -45,13 +55,87 @@ public class Referee extends AbstractReferee {
     }
 
     private void setWinner(Player player) {
+        setScore(player, 1);
+    }
+
+    private void setScore(Player player, int score) {
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(player.getNicknameToken() + " won!"));
-        player.setScore(1);
+        player.setScore(score);
     }
 
     private void setLoser(Player player, String message) {
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(message));
         player.setScore(-1);
+    }
+
+    private boolean attemptInterrupt() {
+        Action lastMeaningfulAction = game.getLastMeaningfulAction();
+
+        if (lastMeaningfulAction != null) {
+            Tile lastDiscardedTile = lastMeaningfulAction.targets.get(lastMeaningfulAction.targets.size() - 1);
+
+            Boolean[] cache = {false, false, false, false};
+            for (Player player : gameManager.getActivePlayers()) {
+                int playerId = player.getIndex();
+
+                if (game.canInterrupt(playerId)) {
+                    System.out.printf("%d can interrupt%n", playerId);
+                    ArrayList<Action> unknownActions = game.getUnknownActions(playerId);
+
+                    player.sendInputLine("interrupt");
+                    player.sendInputLine(String.valueOf(unknownActions.size()));
+
+                    for (Action action : unknownActions) {
+                        player.sendInputLine(action.toString());
+                    }
+
+                    cache[playerId] = true;
+                    player.execute();
+                }
+            }
+
+            System.out.println(Arrays.toString(cache));
+
+            ArrayList<Action> actions = new ArrayList<>();
+            for (Player player : gameManager.getActivePlayers()) {
+                int playerId = player.getIndex();
+
+                if (cache[playerId]) {
+                    try {
+                        List<String> outputs = player.getOutputs();
+                        actions.add(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), lastMeaningfulAction.player, lastDiscardedTile, true));
+                    } catch (TimeoutException | InvalidAction e) {
+                        setLoser(player, e.getMessage());
+                        gameManager.endGame();
+                        return true;
+                    }
+                }
+            }
+
+            System.out.println(actions);
+
+            if (actions.size() > 0) { // Interrupting is an option for at least one person
+                Action action = Collections.max(actions, Comparator.comparing(Action::getPriority));
+
+                if (action.type.equals(Action.ActionType.Win)) {
+                    for (Action a : actions) {
+                        if (a.type.equals(Action.ActionType.Win))
+                            setScore(gameManager.getPlayer(a.player), 1);
+                    }
+
+                    setLoser(gameManager.getPlayer(lastMeaningfulAction.player), "");
+                    gameManager.endGame();
+                } else if (!action.type.equals(Action.ActionType.Pass)) {
+                    game.commitAction(action, 0.5);
+                } else {
+                    alreadyPassed = true;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -66,73 +150,7 @@ public class Referee extends AbstractReferee {
             game.checkFlowers();
         }
 
-        if (!alreadyPassed) {
-            Action lastMeaningfulAction = game.getLastMeaningfulAction();
-
-            if (lastMeaningfulAction != null) {
-                Tile lastDiscardedTile = lastMeaningfulAction.targets.get(lastMeaningfulAction.targets.size() - 1);
-
-                Boolean[] cache = {false, false, false, false};
-                for (Player player : gameManager.getActivePlayers()) {
-                    int playerId = player.getIndex();
-
-                    if (game.canInterrupt(playerId)) {
-                        System.out.printf("%d can interrupt%n", playerId);
-                        ArrayList<Action> unknownActions = game.getUnknownActions(playerId);
-
-                        player.sendInputLine("interrupt");
-                        player.sendInputLine(String.valueOf(unknownActions.size()));
-
-                        for (Action action : unknownActions) {
-                            player.sendInputLine(action.toString());
-                        }
-
-                        cache[playerId] = true;
-                        player.execute();
-                    }
-                }
-
-                System.out.println(Arrays.toString(cache));
-
-                ArrayList<Action> actions = new ArrayList<>();
-                for (Player player : gameManager.getActivePlayers()) {
-                    int playerId = player.getIndex();
-
-                    if (cache[playerId]) {
-                        try {
-                            List<String> outputs = player.getOutputs();
-                            actions.add(Action.parse(outputs.get(0), player.getIndex(), game.getHands(), lastMeaningfulAction.player, lastDiscardedTile, true));
-                        } catch (TimeoutException | InvalidAction e) {
-                            setLoser(player, e.getMessage());
-                            gameManager.endGame();
-                            return;
-                        }
-                    }
-                }
-
-                System.out.println(actions);
-
-                if (actions.size() > 0) { // Interrupting is an option for at least one person
-                    Action action = Collections.max(actions, Comparator.comparing(Action::getPriority));
-
-                    if (action.type.equals(Action.ActionType.Win)) {
-                        for (Action a: actions) {
-                            if (a.type.equals(Action.ActionType.Win)) setWinner(gameManager.getPlayer(a.player));
-                        }
-
-                        setLoser(gameManager.getPlayer(lastMeaningfulAction.player), "");
-                        gameManager.endGame();
-                    } else if (!action.type.equals(Action.ActionType.Pass)) {
-                        game.commitAction(action, 0.5);
-                    } else {
-                        alreadyPassed = true;
-                    }
-
-                    return;
-                }
-            }
-        }
-
+        if (!alreadyPassed && attemptInterrupt()) return;
 
         Player player = gameManager.getPlayer(game.getNextPlayer());
         System.out.printf("Turn of %d%n", player.getIndex());
@@ -169,7 +187,7 @@ public class Referee extends AbstractReferee {
 
             game.commitAction(action, 0.66);
         } catch (TimeoutException | InvalidAction e) {
-            setLoser(player, e.getMessage());
+            setLoser(player, e.toString());
             gameManager.endGame();
         }
 

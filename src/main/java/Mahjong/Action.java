@@ -3,14 +3,16 @@ package Mahjong;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static Mahjong.Constant.FAN_MIN;
 
 public class Action {
     public final int player;
     public final ActionType type;
     public ArrayList<Tile> targets = new ArrayList<>();
+    public FanCalculator calculator;
 
     public enum ActionType {
         Draw, Discard, Pong, Seung, Gong, Flower, Bookmark, Pass, Win
@@ -20,6 +22,13 @@ public class Action {
         this.player = committer;
         this.type = action;
         this.targets = targets;
+    }
+
+    public Action(int committer, ActionType action, ArrayList<Tile> targets, FanCalculator calculator) {
+        this.player = committer;
+        this.type = action;
+        this.targets = targets;
+        this.calculator = calculator;
     }
 
     private static List<String> splitTileStrings(String input) {
@@ -42,6 +51,7 @@ public class Action {
 
         //int amount = 0, expected = 0, extraIndex = -1;
         ActionType type;
+        FanCalculator calculator = new FanCalculator(0);
         Hand hand = hands.get(committer);
         String tilesString = "";
 
@@ -160,8 +170,14 @@ public class Action {
             case "win":
                 type = ActionType.Win;
 
-                if (!hand.canSik(lastDiscardedTile)) {
+                calculator = hand.getCalculator(lastDiscardedTile);
+
+                if (calculator.fan == -1) {
                     throw new InvalidAction("Not enough tiles to perform WIN");
+                }
+
+                if (calculator.fan < FAN_MIN) {
+                    throw new InvalidAction(String.format("Fan count (%d) is less than minimum required (%d)", calculator.fan, FAN_MIN));
                 }
 
                 targets.add(lastDiscardedTile);
@@ -174,43 +190,10 @@ public class Action {
 
                 break;
             default:
-                throw new InvalidAction(String.format("Action %s is invalid", inputChunks[1]));
+                throw new InvalidAction(String.format("Action %s is invalid", inputChunks[0]));
         }
 
-        //        if (expected == -2) {
-        //            expected = tilesStrings.size();
-        //        }
-        //
-        //        for (int i = 0; i < expected; i++) {
-        //            String tileString = tilesStrings.get(i);
-        //
-        //            for (int j = 0; j < amount; j++) {
-        //                Tile tile = hand.searchTile(tileString);
-        //
-        //                if (tile == null) {
-        //                    if (j > 0) {
-        //                        throw new InvalidAction(String.format(
-        //                                "Not enough tile %s to perform %s, needed %d, found %d only",
-        //                                tilesString,
-        //                                type.name(),
-        //                                amount,
-        //                                j
-        //                        ));
-        //                    } else {
-        //                        throw new InvalidAction(String.format("Tile %s not found to perform %s", tileString, type.name()));
-        //                    }
-        //                }
-        //
-        //                targets.add(tile);
-        //            }
-        //        }
-        //
-        //        if (extraIndex > -1) {
-        //            String tileString = tilesStrings.get(extraIndex);
-        //            targets.add(hand.searchTile(tileString));
-        //        }
-
-        return new Action(committer, type, targets);
+        return new Action(committer, type, targets, calculator);
     }
 
     public int getPriority() {
